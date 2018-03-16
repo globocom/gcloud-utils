@@ -18,14 +18,19 @@ PROJECT = "recomendacao-gcom"
 class Compute(object):
     """Google-compute-engine handler"""
 
-    def __init__(self):
+    def __init__(self, project=PROJECT, zone=ZONE):
         self.logger = logging.getLogger(name=self.__class__.__name__)
         self.client = discovery.build('compute', 'v1')
         self.__update_instances(self.client)
+        self.project=project
+        self.zone=zone
+
+    def __request_instances_info(self):
+        instances =  self.client.instances().list(project=self.project, zone=self.zone).execute()
+        return instances[u'items']
 
     def __update_instances(self, client):
-        instances =  client.instances().list(project=PROJECT, zone=ZONE).execute()
-        intances_itens = instances[u'items']
+        intances_itens = self.__request_instances_info()
         result = {}
         for i in intances_itens:
             result.update({i[u'name'] : i[u'status']})
@@ -63,7 +68,7 @@ class Compute(object):
         """Stop VM by name"""
         self.__change_status(instance_name, self.client.instances().stop, "TERMINATED")
 
-c = Compute()
-c.start_instance("instance-7")
-time.sleep(10)
-c.stop_instance("instance-7")
+# c = Compute()
+# c.start_instance("instance-7")
+# time.sleep(10)
+# c.stop_instance("instance-7")
