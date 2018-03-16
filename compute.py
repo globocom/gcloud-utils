@@ -19,11 +19,12 @@ class Compute(object):
     """Google-compute-engine handler"""
 
     def __init__(self, project=PROJECT, zone=ZONE):
+        self.project=project
+        self.zone=zone
         self.logger = logging.getLogger(name=self.__class__.__name__)
         self.client = discovery.build('compute', 'v1')
         self.__update_instances(self.client)
-        self.project=project
-        self.zone=zone
+        
 
     def __request_instances_info(self):
         instances =  self.client.instances().list(project=self.project, zone=self.zone).execute()
