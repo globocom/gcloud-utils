@@ -1,0 +1,7 @@
+env.HTTPS_PROXY=proxy.globoi.com:3128
+env.HTTP_PROXY=proxy.globoi.com:3128
+
+env.GOOGLE_APPLICATION_CREDENTIALS=${working.dir}/credentials.json
+
+type=command
+command=${python} compute.py
