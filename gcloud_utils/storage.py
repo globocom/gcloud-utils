@@ -37,6 +37,9 @@ class Storage(object):
     def download_file(self, storage_path):
         """ Download Storage file to local tmp path"""
         obj = self.bucket.blob(storage_path)
+        local_path = self.__path_as_local(storage_path)
+        path_to_create = "/".join(local_path.split("/")[:-1])
+        self.__setup_tmp_path(path_to_create)
         with open(self.tmp_path+"/"+storage_path, 'wb') as tmp_file:
             obj.download_to_file(tmp_file)
 
