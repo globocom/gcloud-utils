@@ -5,8 +5,6 @@ import logging
 from googleapiclient import discovery
 
 
-# os.environ["HTTPS_PROXY"] = "proxy.globoi.com:3128"
-
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
@@ -69,7 +67,7 @@ class Compute(object):
         """Stop VM by name"""
         self.__change_status(instance_name, self.client.instances().stop, "TERMINATED")
 
-# c = Compute()
-# c.start_instance("instance-7")
-# time.sleep(10)
-# c.stop_instance("instance-7")
+c = Compute()
+c.start_instance("instance-7")
+time.sleep(60)
+c.stop_instance("instance-7")
