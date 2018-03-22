@@ -34,7 +34,7 @@ class Storage(object):
         """Check if path exists on Storage"""
         return  self.bucket.blob(path).exists()
 
-    def __download_file(self, storage_path):
+    def download_file(self, storage_path):
         """ Download Storage file to local tmp path"""
         obj = self.bucket.blob(storage_path)
         with open(self.tmp_path+"/"+storage_path, 'wb') as tmp_file:
@@ -53,11 +53,11 @@ class Storage(object):
         else:
             return blobs_files
 
-    def __download_files(self, path, filter_suffix=""):
-        """Download all CSV files in path"""
-        list_paths = self.list_files(path, filter_suffix=".csv")
+    def download_files(self, path, filter_suffix=None):
+        """Download all files in path"""
+        list_paths = self.list_files(path, filter_suffix=filter_suffix)
         for path_to_download in list_paths:
-            self.__download_file(path_to_download.name)
+            self.download_file(path_to_download.name)
 
     def get_file(self, file_path):
         """Get all files from Storage path"""
@@ -71,7 +71,7 @@ class Storage(object):
             return open(local_file_path)
         else:
             self.logger.debug("Download file...")
-            self.__download_file(file_path)
+            self.download_file(file_path)
             return self.get_file(file_path)
 
     def get_files_in_path(self,path):
