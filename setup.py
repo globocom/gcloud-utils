@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
   name = 'gcloud_utils',
   packages = ['gcloud_utils'], # this must be the same as the name above
-  version = '0.2',
+  version = '0.3',
   description = 'handle gcloud services',
   author = 'Susana Bouchardet',
   author_email = 'susana.bouchardet@corp.globo.com',
