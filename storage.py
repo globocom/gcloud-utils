@@ -8,10 +8,6 @@ from gcloud import storage
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
-ZONE = "us-west1-b"
-REGION = "us-west1"
-PROJECT = "recomendacao-gcom"
-
 class Storage(object):
     """Google-Storage handler"""
     def __init__(self, bucket="rec-alg", tmp_path=".tmp"):
