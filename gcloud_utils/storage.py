@@ -4,10 +4,6 @@ import os
 import logging
 from gcloud import storage
 
-
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
-
 class Storage(object):
     """Google-Storage handler"""
     def __init__(self, bucket="rec-alg", tmp_path=".tmp"):
@@ -15,19 +11,20 @@ class Storage(object):
 
         self.client = storage.Client()
         self.bucket = self.client.get_bucket(bucket)
-        self.__setup_tmp_path(tmp_path)
-        self.tmp_path = os.getcwd()+"/"+tmp_path
+        self.tmp_path = os.path.join(os.getcwd(), tmp_path)
+        self.__setup_tmp_path(self.tmp_path)
 
     def __setup_tmp_path(self, path):
         if not os.path.exists(path):
             os.makedirs(path)
 
     def __path_as_local(self,path):
-        return "{}/{}".format(self.tmp_path,path)
+        return os.path.join(self.tmp_path,path)
 
-    def path_exists_local(self,path):
+    def path_exists_local(self,storage_path):
         """Check if path exists local"""
-        local_path = self.__path_as_local(path)
+        local_path = self.__path_as_local(storage_path)
+        print("PATH EXISTS? %s"%os.path.exists(local_path))
         return os.path.exists(local_path)
 
     def path_exists_storage(self,path):
@@ -100,10 +97,10 @@ class Storage(object):
             if len(a[2]) > 0:
                 for i in a[2]:
                     yield "%s/%s"%(a[0],i)
-    
+
     def upload_path(self,storage_path_base, local_path_base):
         """Upload all filer from local path to Storage"""
         for file_path in self.__local_subfiles(local_path_base):
             file_path_to_save = file_path[len(local_path_base)+1:]
-            storage_path = storage_path_base+"/"+file_path_to_save
+            storage_path = os.path.join(storage_path_base,file_path_to_save)
             self.upload_file(storage_path,file_path)
