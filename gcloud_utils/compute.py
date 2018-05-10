@@ -3,6 +3,8 @@ import time
 import os
 import logging
 from googleapiclient import discovery
+import httplib2
+httplib2.debuglevel = 4
 
 
 
@@ -25,7 +27,7 @@ class Compute(object):
         
 
     def __request_instances_info(self):
-        instances =  self.client.instances().list(project=self.project, zone=self.zone).execute()
+        instances = self.client.instances().list(project=self.project, zone=self.zone).execute()
         return instances[u'items']
 
     def __update_instances(self, client):
@@ -66,3 +68,5 @@ class Compute(object):
     def stop_instance(self, instance_name):
         """Stop VM by name"""
         self.__change_status(instance_name, self.client.instances().stop, "TERMINATED")
+
+c = Compute()
