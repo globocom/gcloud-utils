@@ -105,3 +105,9 @@ venv.bak/
 
 # VSCode
 .vscode
+
+# credentials
+credentials.json
+
+# MacOs 
+.DS_Store
