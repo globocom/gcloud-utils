@@ -1,17 +1,17 @@
-from distutils.core import setup
+# encoding: utf-8
+
+from setuptools import setup, find_packages
 
 with open("version") as version_file:
     version = version_file.read().strip()
 
 setup(
-  name = 'gcloud_utils',
-  version=version,
-  packages = ['gcloud_utils'], # this must be the same as the name above
-  description = 'handle gcloud services',
-  author = 'Susana Bouchardet',
-  author_email = 'susana.bouchardet@corp.globo.com',
-  url = 'https://gitlab.globoi.com/bigdata/gcloud-utils', # use the URL to the github repo
-  download_url = 'https://gitlab.globoi.com/bigdata/gcloud-utils/repository/master/archive.tar.gz', # I'll explain this in a second
-  keywords = ['gcloud'], # arbitrary keywords
-  classifiers = [],
+    name="gcloud_utils",
+    version=version,
+    description="handle gcloud services",
+    author="Big Data",
+    author_email="bigdata@corp.globo.com",
+    license='MIT',
+    install_requires=["google-api-python-client"],
+    packages=find_packages(),
 )
