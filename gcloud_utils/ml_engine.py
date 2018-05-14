@@ -1,6 +1,7 @@
 """Submit Job to ML Engine"""
 import logging
 import datetime
+import re
 from googleapiclient import discovery
 
 logging.basicConfig(level=logging.DEBUG,
@@ -10,15 +11,17 @@ REGION = "us-east1"
 PROJECT = "recomendacao-gcom"
 BUCKET_NAME = "rec-alg"
 PACKAGE_PATH = "packages"
+JOB_DIR="jobs"
 
 class MlEngine(object):
     """Google-ml-engine handler"""
-    def __init__(self, project, bucket_name,region, package_path=PACKAGE_PATH):
+    def __init__(self, project, bucket_name,region, package_path=PACKAGE_PATH, job_dir=JOB_DIR):
         self.project = project
         self.parent = "projects/{}".format(self.project)
         self.bucket_name = bucket_name
         self.region = region
         self.package_full_path = "gs://{}/{}".format(self.bucket_name, package_path)
+        self.job_dir_suffix = "gs://{}/{}".format(self.bucket_name,job_dir)
         self.__logger = logging.getLogger(name=self.__class__.__name__)
         self.client = discovery.build('ml', 'v1')
 
@@ -37,6 +40,7 @@ class MlEngine(object):
         date_formated = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
         job_id = "{prod}_{mod}_{date}".format(prod=product,mod=suffix_module,date=date_formated)
         request = self.client.projects()
+        job_dir = "{}/{}".format(self.job_dir_suffix,job_id)
 
         body_request = {
             "jobId" : job_id,
@@ -53,7 +57,7 @@ class MlEngine(object):
             ],
             "region": self.region,
             "runtimeVersion": "1.0",
-            "jobDir": "gs://rec-alg/jobs/{}".format(job_id)
+            "jobDir": job_dir
             }
         }
         job = request.jobs().create(parent=self.parent, body=body_request)
@@ -61,14 +65,54 @@ class MlEngine(object):
         print result
         return 0
         
-    def create_model(self):
+    def create_new_model(self, name):
         """Create new model"""
-        # request_dict = {'name': 'modelTeste',
-        # 'description': 'This is a machine learning model entry.'}
-        request = self.client.projects().models()
-        response = request.execute()
-        print(response)
+        request_dict = {'name': name,
+        'description': 'This is a machine learning model entry.'}
+        request = self.client.projects().models().create(parent=self.parent,body=request_dict)
+        return request.execute()
+
+    def __increase_version(self,version):
+        p = "^v\d_\d$"
+        result = re.match(p,version)
+        if result is None:
+            raise ValueError('Parameter "version" value "{}" does not match the pattern "{}"'.format(version,p))            
+
+        float_value = float(version[1:].replace("_","."))
+        new_version = str(float_value + 0.1)
+        return "v{}".format(new_version.replace(".","_"))
+
+    def __parent_model_name(self, model_name):
+        return self.parent+"/models/"+model_name
+                
+    def __get_versions(self,model_name):
+        parent_model = self.__parent_model_name(model_name)
+        version_list = self.client\
+        .projects()\
+        .models()\
+        .versions()\
+        .list(parent=parent_model)\
+        .execute()
         
-ml = MlEngine(PROJECT,BUCKET_NAME,REGION)
-ml.start_training_job("globoplay","autoencoder-1.0.tar.gz","trainer.autoencoder_keras")
-    
+        return [x['name'].split("/")[-1] for x in version_list['versions']]
+
+    def create_new_model_version(self,model_name,job_id):
+        """Increase Model version """
+        
+        versions = self.__get_versions(model_name)
+        last_version = max(versions)
+        new_version = self.__increase_version(last_version)
+        parent_model = self.__parent_model_name(model_name)
+        body_request = {
+            "name": new_version,
+            "deploymentUri": "{}/{}/export".format( self.job_dir_suffix,job_id)
+            }
+        
+        result = self.client\
+         .projects()\
+         .models()\
+         .versions()\
+         .create(body=body_request, parent=parent_model)\
+         .execute()
+        
+        return result
