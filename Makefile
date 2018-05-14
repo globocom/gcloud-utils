@@ -3,7 +3,6 @@ ifndef VERSION
 	@echo "USAGE:\n make VERSION=XXX release"
 	$(error you must pass a VERSION)
 endif
-	rm -rf *.egg-info dist
 	@echo $(VERSION) > version.txt
 	git add version.txt
 	git tag $(VERSION)
