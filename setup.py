@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 from setuptools import setup, find_packages
 
 with open("version") as version_file:
@@ -12,6 +10,8 @@ setup(
     author="Big Data",
     author_email="bigdata@corp.globo.com",
     license='MIT',
+    url = 'https://gitlab.globoi.com/bigdata/gcloud-utils',
+    download_url = 'https://gitlab.globoi.com/bigdata/gcloud-utils/repository/master/archive.tar.gz',
     install_requires=["google-api-python-client"],
-    packages=find_packages(),
+    packages=find_packages()
 )
