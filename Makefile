@@ -4,6 +4,7 @@ ifndef VERSION
 	$(error you must pass a VERSION)
 endif
 	@echo $(VERSION) > version
+	git add version
 	git tag $(VERSION)
 	git commit -m "Bump $(VERSION)"
 	git push --tags
