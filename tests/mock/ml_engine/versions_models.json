@@ -1,0 +1,71 @@
+{
+    "versions": [
+        {
+            "name": "projects/recomendacao-gcom/models/autoencoder_model/versions/v2",
+            "runtimeVersion": "1.2",
+            "pythonVersion": "2.7",
+            "framework": "TENSORFLOW",
+            "state": "READY",
+            "lastUseTime": "2018-04-30T19:50:42Z",
+            "deploymentUri": "gs://rec-alg/jobs/autoencoder_keras_train_20180429_215221/export",
+            "createTime": "2018-04-30T00:57:37Z"
+        },
+        {
+            "name": "projects/recomendacao-gcom/models/autoencoder_model/versions/v3",
+            "runtimeVersion": "1.2",
+            "pythonVersion": "2.7",
+            "framework": "TENSORFLOW",
+            "state": "READY",
+            "deploymentUri": "gs://rec-alg/jobs/autoencoder_keras_train_20180429_223627/export",
+            "createTime": "2018-04-30T01:41:47Z"
+        },
+        {
+            "name": "projects/recomendacao-gcom/models/autoencoder_model/versions/v4",
+            "runtimeVersion": "1.2",
+            "pythonVersion": "2.7",
+            "framework": "TENSORFLOW",
+            "state": "READY",
+            "deploymentUri": "gs://rec-alg/jobs/autoencoder_keras_train_20180430_141207/export",
+            "createTime": "2018-04-30T17:20:51Z"
+        },
+        {
+            "name": "projects/recomendacao-gcom/models/autoencoder_model/versions/v4_1",
+            "runtimeVersion": "1.2",
+            "pythonVersion": "2.7",
+            "framework": "TENSORFLOW",
+            "state": "READY",
+            "lastUseTime": "2018-05-02T13:02:12Z",
+            "deploymentUri": "gs://rec-alg/jobs/autoencoder_keras_train_20180430_160300/export",
+            "createTime": "2018-04-30T19:32:15Z"
+        },
+        {
+            "name": "projects/recomendacao-gcom/models/autoencoder_model/versions/v4_2",
+            "runtimeVersion": "1.2",
+            "pythonVersion": "2.7",
+            "framework": "TENSORFLOW",
+            "state": "READY",
+            "lastUseTime": "2018-05-02T17:11:31Z",
+            "deploymentUri": "gs://rec-alg/jobs/autoencoder_keras_train_20180502_140113/export",
+            "createTime": "2018-05-02T17:07:37Z",
+            "isDefault": "True"
+        },
+        {
+            "name": "projects/recomendacao-gcom/models/autoencoder_model/versions/v4_3",
+            "runtimeVersion": "1.0",
+            "pythonVersion": "2.7",
+            "framework": "TENSORFLOW",
+            "state": "READY",
+            "deploymentUri": "gs://rec-alg/jobs/globoplay_autoencoder_keras_2018_05_10_20_35_20/export",
+            "createTime": "2018-05-14T12:59:22Z"
+        },
+        {
+            "name": "projects/recomendacao-gcom/models/autoencoder_model/versions/v4_4",
+            "runtimeVersion": "1.0",
+            "pythonVersion": "2.7",
+            "framework": "TENSORFLOW",
+            "state": "READY",
+            "deploymentUri": "gs://rec-alg/jobs/globoplay_autoencoder_keras_2018_05_10_20_35_20/export",
+            "createTime": "2018-05-14T13:50:25Z"
+        }
+    ]
+}
