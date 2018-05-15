@@ -33,20 +33,23 @@ class MlEngine(object):
         .execute()
         return request
 
-    def __parse_start_training_args(self,args):
+    def __parse_start_training_args(self, args):
         formated_args = []
         for key in args:
             formated_args.append("--{}".format(key.replace("_","-")))
             formated_args.append(args[key])
         return formated_args
 
-    def start_training_job(self, job_id_prefix,package_name, module, **args):
+    def start_training_job(self, job_id_prefix, package_name, module, **args):
         """Start a training job"""
 
         package_uri = "{}/{}".format(self.package_full_path, package_name)
         suffix_module = module.split(".")[-1]
         date_formated = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        job_id = "{prefix}_{mod}_{date}".format(prefix=job_id_prefix, mod=suffix_module, date=date_formated)
+        job_id = "{prefix}_{mod}_{date}".format(
+            prefix=job_id_prefix,
+            mod=suffix_module,
+            date=date_formated)
         request = self.client.projects()
         job_dir = "{}/{}".format(self.job_dir_suffix, job_id)
 
@@ -66,11 +69,11 @@ class MlEngine(object):
         job = request.jobs().create(parent=self.parent, body=body_request)
         return job
 
-    def create_new_model(self, name):
+    def create_new_model(self, name, description='Ml model'):
         """Create new model"""
         request_dict = {
             'name': name,
-            'description': 'This is a machine learning model entry.'
+            'description': description
             }
         request = self.client.projects().models().create(parent=self.parent, body=request_dict)
         return request
@@ -100,7 +103,7 @@ class MlEngine(object):
         .list(parent=parent_model)\
         .execute()
 
-        if len(version_list)>0:
+        if version_list:
             return [x['name'].split("/")[-1] for x in version_list['versions']]
         else:
             return ["v0_0"]

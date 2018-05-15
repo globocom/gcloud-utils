@@ -29,14 +29,14 @@ class TestMlEngine(unittest.TestCase):
         """Test request to create a new model"""
         http = HttpMock('tests/mock/ml_engine/first_result.json', {'status': '200'})
         ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION",http=http)
-        post_to_create_model = ml_engine_test.create_new_model("MODEL")
+        post_to_create_model = ml_engine_test.create_new_model("MODEL", "DESCRIPTION")
 
         # Test Method
         self.assertEqual(post_to_create_model.method, "POST")
         # Test API
         self.assertEqual(post_to_create_model.uri, "https://ml.googleapis.com/v1/projects/PROJECT/models?alt=json")
         # Test Body Post
-        expected = """{"name": "MODEL", "description": "This is a machine learning model entry."}"""
+        expected = """{"name": "MODEL", "description": "DESCRIPTION"}"""
         self.assertEqual(post_to_create_model.body, expected)
 
     
