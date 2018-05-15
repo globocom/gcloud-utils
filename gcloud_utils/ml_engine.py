@@ -33,32 +33,31 @@ class MlEngine(object):
         .execute()
         return request
 
-    def start_training_job(self, product, package_name, module):
+    def __parse_start_training_args(self,args):
+        formated_args = []
+        for key in args:
+            formated_args.append("--{}".format(key.replace("_","-")))
+            formated_args.append(args[key])
+        return formated_args
+
+    def start_training_job(self, job_id_prefix,package_name, module, **args):
         """Start a training job"""
 
         package_uri = "{}/{}".format(self.package_full_path, package_name)
         suffix_module = module.split(".")[-1]
         date_formated = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        job_id = "{prod}_{mod}_{date}".format(prod=product, mod=suffix_module, date=date_formated)
+        job_id = "{prefix}_{mod}_{date}".format(prefix=job_id_prefix, mod=suffix_module, date=date_formated)
         request = self.client.projects()
         job_dir = "{}/{}".format(self.job_dir_suffix, job_id)
+
+        formated_args = self.__parse_start_training_args(args)
 
         body_request = {
             "jobId" : job_id,
             "trainingInput":{
                 "packageUris": [package_uri],
                 "pythonModule": module,
-                "args": [
-                    "--train-file",
-                    "gs://rec-alg/recommendation/matrix_prefs/{}/train_one_file/part-00000"
-                    .format(product),
-                    "--test-file",
-                    "gs://rec-alg/recommendation/matrix_prefs/{}/test_one_file/part-00000"
-                    .format(product),
-                    "--metadata-file",
-                    "gs://rec-alg/recommendation/matrix_prefs/{}/metadata/part-00000"
-                    .format(product)
-                ],
+                "args": formated_args,
                 "region": self.region,
                 "runtimeVersion": "1.0",
                 "jobDir": job_dir

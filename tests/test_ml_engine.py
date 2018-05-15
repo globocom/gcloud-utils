@@ -13,7 +13,10 @@ class TestMlEngine(unittest.TestCase):
         """"Teste request to start a training job"""
         http = HttpMock('tests/mock/ml_engine/first_result.json', {'status': '200'})
         ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION",http=http)
-        post_to_create = ml_engine_test.start_training_job("PRODUTO", "PACOTE", "PACOTE.MODULO")
+        post_to_create = ml_engine_test.start_training_job("PRODUTO", "PACOTE", "PACOTE.MODULO",
+        train_file="gs://rec-alg/recommendation/matrix_prefs/PRODUTO/train_one_file/part-00000",
+        test_file="gs://rec-alg/recommendation/matrix_prefs/PRODUTO/test_one_file/part-00000",
+        metadata_file="gs://rec-alg/recommendation/matrix_prefs/PRODUTO/metadata/part-00000")
         # Test Method
         self.assertEqual(post_to_create.method, "POST")
         # Test API
