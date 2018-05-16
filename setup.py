@@ -12,6 +12,6 @@ setup(
     license='MIT',
     url = 'https://gitlab.globoi.com/bigdata/gcloud-utils',
     download_url = 'https://gitlab.globoi.com/bigdata/gcloud-utils/repository/master/archive.tar.gz',
-    install_requires=["google-api-python-client"],
+    install_requires=["google-api-python-client", "gcloud"],
     packages=find_packages()
 )

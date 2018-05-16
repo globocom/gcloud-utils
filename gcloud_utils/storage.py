@@ -3,11 +3,15 @@ import os
 import logging
 from gcloud import storage
 
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+
+
 class Storage(object):
     """Google-Storage handler"""
-    def __init__(self, bucket="rec-alg"):
+    def __init__(self, bucket="rec-alg", http=None):
         self.logger = logging.getLogger(name=self.__class__.__name__)
-        self.client = storage.Client()
+        self.client = storage.Client(http=http)
         self.bucket = self.client.get_bucket(bucket)
 
     def __filter_suffix_files(self, blobs, suffix):
@@ -37,6 +41,11 @@ class Storage(object):
         list_paths = self.list_files(path, filter_suffix=filter_suffix)
         for path_to_download in list_paths:
             self.download_file(path_to_download.name, local_path)
+
+    def get_abs_path(self, storage_path):
+        """get abs path from GStorage"""
+        bucket_path = "gs://{}/".format(self.bucket.name)
+        return os.path.join(bucket_path, storage_path)
 
     def get_file(self, file_path, local_path):
         """Get all files from Storage path"""
@@ -69,17 +78,16 @@ class Storage(object):
     def upload_file(self, storage_path, local_path):
         """Upload one local file to Storage"""
         with open(local_path) as loc:
-            self.logger.debug("Upload file %s to %s",local_path, storage_path)
+            self.logger.debug("Upload file %s to %s", local_path, storage_path)
             self.bucket.blob(storage_path).upload_from_file(loc)
 
-    def upload_path(self,storage_path_base, local_path_base):
+    def upload_path(self, storage_path_base, local_path_base):
         """Upload all filer from local path to Storage"""
-        
-        for root, dirs, files in os.walk(local_path_base):
+        for root, _, files in os.walk(local_path_base):
             for file_to_upload in files:
-                full_path_upload = os.path.join(root,file_to_upload)
-                storage_path = os.path.join(storage_path_base,file_to_upload)
-                self.upload_file(storage_path,full_path_upload)
+                full_path_upload = os.path.join(root, file_to_upload)
+                storage_path = os.path.join(storage_path_base, file_to_upload)
+                self.upload_file(storage_path, full_path_upload)
 
     def upload_value(self, storage_path, value):
         """Upload a value to  Storage"""
