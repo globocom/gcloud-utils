@@ -1,4 +1,3 @@
-"""Start gcloud instance"""
 """Module to download and use files from Google Storage"""
 import os
 import logging
@@ -85,6 +84,3 @@ class Storage(object):
     def upload_value(self, storage_path, value):
         """Upload a value to  Storage"""
         self.bucket.blob(storage_path).upload_from_string(value)
-
-st = Storage()
-st.upload_path("recommendation/prediction_mlengine",".tmp/recommendation")
