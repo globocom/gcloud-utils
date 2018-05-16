@@ -72,7 +72,7 @@ class MlEngine(object):
         return request
 
     def create_new_model_version(self, model_name, job_id):
-        """Increase Model version """
+        """Increase Model version"""
 
         versions = self.__get_versions(model_name)
         last_version = max(versions)
@@ -91,6 +91,15 @@ class MlEngine(object):
 
         return request
 
+    def set_version_as_default(self, model, version):
+        """Set a model version as default"""
+        version_full_path = "{}/models/{}/versions/{}".format(self.parent, model,version)
+        request = self.client\
+         .projects()\
+         .models()\
+         .versions()\
+         .setDefault(body={},name=version_full_path)
+        return request
 
     def list_models(self):
         """List all models in project"""
@@ -121,9 +130,35 @@ class MlEngine(object):
                 "pythonModule": module,
                 "args": formated_args,
                 "region": self.region,
-                "runtimeVersion": "1.0",
+                "runtimeVersion": "1.2",
                 "jobDir": job_dir
             }
         }
+        job = request.jobs().create(parent=self.parent, body=body_request)
+        return job
+
+    def start_predict_job(self, job_id_prefix, model, input_path, output_path):
+        """start a prediction job"""
+        if not isinstance(input_path, list):
+            raise TypeError("input_path must be a list") 
+
+        request = self.client.projects()
+        model_full_path = "{}/models/{}".format(self.parent, model)
+
+        date_formated = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+        job_id = "{}_{}_{}_prediction".format(job_id_prefix, model, date_formated)
+        
+        body_request = {
+            "jobId":job_id,
+            "predictionInput":{
+                "modelName": model_full_path,
+                "dataFormat": "JSON",
+                "inputPaths": input_path,
+                "outputPath": output_path,
+                "region": "us-east1"
+                }
+             
+        }
+        
         job = request.jobs().create(parent=self.parent, body=body_request)
         return job
