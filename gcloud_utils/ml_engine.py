@@ -25,7 +25,8 @@ class MlEngine(object):
         self.__logger = logging.getLogger(name=self.__class__.__name__)
         self.client = discovery.build('ml', 'v1', http=http)
 
-    def __get_versions(self, model_name):
+    def get_model_versions(self, model_name):
+        """Return all versions"""
         parent_model = self.__parent_model_name(model_name)
         version_list = self.client\
         .projects()\
@@ -90,7 +91,7 @@ class MlEngine(object):
     def increase_model_version(self, model_name, job_id):
         """Increase Model version"""
 
-        versions = self.__get_versions(model_name)
+        versions = self.get_versions(model_name)
         last_version = max(versions)
         new_version = self.__increase_version(last_version)
         
