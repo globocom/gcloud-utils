@@ -49,8 +49,9 @@ class TestMlEngine(unittest.TestCase):
         ])
         ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION",http=http)
 
-        post_to_create_model = ml_engine_test.create_new_model_version("MODEL","JOB_ID")
+        (post_to_create_model, new_version) = ml_engine_test.increase_model_version("MODEL","JOB_ID")
         self.assertEqual(post_to_create_model.body,'{"deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export", "name": "v4_5"}')
+        self.assertEqual(new_version, "v4_5")
 
     def test_create_new_model_version_5_0(self):
         """Test the creation of new model"""
@@ -61,9 +62,9 @@ class TestMlEngine(unittest.TestCase):
         ])
         ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION",http=http)
 
-        post_to_create_model = ml_engine_test.create_new_model_version("MODEL","JOB_ID")
+        (post_to_create_model, new_version) = ml_engine_test.increase_model_version("MODEL","JOB_ID")
         self.assertEqual(post_to_create_model.body,'{"deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export", "name": "v5_0"}')
-
+        self.assertEqual(new_version,"v5_0")
     def test_create_new_model_version_empty(self):
         """Test the creation of new model"""
         http = HttpMockSequence([
@@ -73,8 +74,9 @@ class TestMlEngine(unittest.TestCase):
         ])
         ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION",http=http)
 
-        post_to_create_model = ml_engine_test.create_new_model_version("MODEL","JOB_ID")
+        (post_to_create_model, new_version) = ml_engine_test.increase_model_version("MODEL","JOB_ID")
         self.assertEqual(post_to_create_model.body,'{"deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export", "name": "v0_1"}')
+        self.assertEqual(new_version,"v0_1")
 
     def test_set_model_version_as_default(self):
         """"Test method that set version as default"""

@@ -71,15 +71,11 @@ class MlEngine(object):
         request = self.client.projects().models().create(parent=self.parent, body=request_dict)
         return request
 
-    def create_new_model_version(self, model_name, job_id):
+    def create_model_version(self, model_name, version, job_id):
         """Increase Model version"""
-
-        versions = self.__get_versions(model_name)
-        last_version = max(versions)
-        new_version = self.__increase_version(last_version)
         parent_model = self.__parent_model_name(model_name)
         body_request = {
-            "name": new_version,
+            "name": version,
             "deploymentUri": "{}/{}/export".format(self.job_dir_suffix, job_id)
             }
 
@@ -90,6 +86,18 @@ class MlEngine(object):
          .create(body=body_request, parent=parent_model)
 
         return request
+
+    def increase_model_version(self, model_name, job_id):
+        """Increase Model version"""
+
+        versions = self.__get_versions(model_name)
+        last_version = max(versions)
+        new_version = self.__increase_version(last_version)
+        
+        request = self.create_model_version(model_name,new_version,job_id)
+
+        return (request,new_version)
+
 
     def set_version_as_default(self, model, version):
         """Set a model version as default"""
