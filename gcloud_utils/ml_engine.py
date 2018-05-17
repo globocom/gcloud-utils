@@ -110,6 +110,11 @@ class MlEngine(object):
          .setDefault(body={},name=version_full_path)
         return request
 
+    def list_jobs(self):
+        """List all models in project"""
+        jobs = self.client.projects().jobs().list(parent=self.parent).execute()
+        return [x['jobId'] for x in jobs['jobs']]
+
     def list_models(self):
         """List all models in project"""
         request = self.client.projects().models()\
