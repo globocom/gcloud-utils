@@ -91,7 +91,7 @@ class MlEngine(object):
     def increase_model_version(self, model_name, job_id):
         """Increase Model version"""
 
-        versions = self.get_versions(model_name)
+        versions = self.get_model_versions(model_name)
         last_version = max(versions)
         new_version = self.__increase_version(last_version)
         
