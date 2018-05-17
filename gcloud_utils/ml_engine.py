@@ -110,7 +110,6 @@ class MlEngine(object):
 
     def start_training_job(self, job_id_prefix, package_name, module, **args):
         """Start a training job"""
-
         package_uri = "{}/{}".format(self.package_full_path, package_name)
         suffix_module = module.split(".")[-1]
         date_formated = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
@@ -130,7 +129,7 @@ class MlEngine(object):
                 "pythonModule": module,
                 "args": formated_args,
                 "region": self.region,
-                "runtimeVersion": "1.2",
+                "runtimeVersion": "1.0",
                 "jobDir": job_dir
             }
         }
@@ -147,7 +146,7 @@ class MlEngine(object):
 
         date_formated = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
         job_id = "{}_{}_{}_prediction".format(job_id_prefix, model, date_formated)
-        
+
         body_request = {
             "jobId":job_id,
             "predictionInput":{
@@ -157,8 +156,6 @@ class MlEngine(object):
                 "outputPath": output_path,
                 "region": "us-east1"
                 }
-             
         }
-        
         job = request.jobs().create(parent=self.parent, body=body_request)
         return job
