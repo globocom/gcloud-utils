@@ -1,0 +1,481 @@
+{
+    "nextPageToken": "1526345156",
+    "jobs": [
+        {
+            "predictionInput": {
+                "modelName": "projects/recomendacao-gcom/models/autoencoder_model",
+                "runtimeVersion": "1.0",
+                "region": "us-east1",
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/globoplay/prediction",
+                "dataFormat": "JSON",
+                "inputPaths": [
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/dataset_to_predict/part-00000"
+                ]
+            },
+            "jobId": "globoplay_autoencoder_model_2018_05_17_16_33_20_prediction",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-17T19:33:23Z",
+            "endTime": "2018-05-17T19:40:30Z",
+            "predictionOutput": {
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/globoplay/prediction",
+                "nodeHours": 0.12,
+                "predictionCount": "15698"
+            },
+            "createTime": "2018-05-17T19:33:21Z"
+        },
+        {
+            "predictionInput": {
+                "modelName": "projects/recomendacao-gcom/models/autoencoder_model",
+                "runtimeVersion": "1.0",
+                "region": "us-east1",
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/globoplay/prediction",
+                "dataFormat": "JSON",
+                "inputPaths": [
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/dataset_to_predict/part-00000"
+                ]
+            },
+            "jobId": "globoplay_autoencoder_model_2018_05_17_11_49_14_prediction",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-17T14:49:17Z",
+            "endTime": "2018-05-17T14:56:18Z",
+            "predictionOutput": {
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/globoplay/prediction",
+                "nodeHours": 0.13,
+                "predictionCount": "15698"
+            },
+            "createTime": "2018-05-17T14:49:16Z"
+        },
+        {
+            "predictionInput": {
+                "modelName": "projects/recomendacao-gcom/models/autoencoder_model_tst",
+                "runtimeVersion": "1.2",
+                "region": "us-east1",
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "dataFormat": "JSON",
+                "inputPaths": [
+                    "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/dataset_to_predict/part-00000"
+                ]
+            },
+            "jobId": "autoencoder_keras_prediction_20180516_233437",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-17T02:34:41Z",
+            "endTime": "2018-05-17T02:54:07Z",
+            "predictionOutput": {
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "nodeHours": 1.58,
+                "predictionCount": "2691316"
+            },
+            "createTime": "2018-05-17T02:34:39Z"
+        },
+        {
+            "trainingOutput": {
+                "consumedMLUnits": 0.09
+            },
+            "trainingInput": {
+                "runtimeVersion": "1.4",
+                "region": "us-east1",
+                "args": [
+                    "--train-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/train_one_file/part-00000",
+                    "--test-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/test_one_file/part-00000",
+                    "--metadata-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/metadata/part-00000"
+                ],
+                "pythonModule": "trainer.autoencoder_keras",
+                "jobDir": "gs://rec-alg/jobs/autoencoder_keras_train_tst20180516_224246",
+                "packageUris": [
+                    "gs://rec-alg/jobs/autoencoder_keras_train_tst20180516_224246/packages/703a42055db1f0b4ea46d336893bb3bb15b1489a472fe75dab437c8c31566718/autoencoder_keras-1.0.tar.gz"
+                ]
+            },
+            "jobId": "autoencoder_keras_train_tst20180516_224246",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-17T01:43:35Z",
+            "endTime": "2018-05-17T01:52:24Z",
+            "createTime": "2018-05-17T01:42:50Z"
+        },
+        {
+            "predictionInput": {
+                "modelName": "projects/recomendacao-gcom/models/autoencoder_model_tst",
+                "runtimeVersion": "1.2",
+                "region": "us-east1",
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "dataFormat": "JSON",
+                "inputPaths": [
+                    "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/dataset_to_predict/part-00000"
+                ]
+            },
+            "jobId": "autoencoder_keras_prediction_20180516_215623",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-17T00:56:26Z",
+            "endTime": "2018-05-17T01:14:54Z",
+            "predictionOutput": {
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "nodeHours": 1.87
+            },
+            "createTime": "2018-05-17T00:56:25Z"
+        },
+        {
+            "predictionInput": {
+                "modelName": "projects/recomendacao-gcom/models/autoencoder_model_tst",
+                "runtimeVersion": "1.2",
+                "region": "us-east1",
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "dataFormat": "JSON",
+                "inputPaths": [
+                    "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/dataset_to_predict/part-00000"
+                ]
+            },
+            "errorMessage": "Job is cancelled by the user.",
+            "jobId": "autoencoder_keras_prediction_20180516_214938",
+            "state": "CANCELLED",
+            "startTime": "2018-05-17T00:49:41Z",
+            "endTime": "2018-05-17T00:55:28Z",
+            "predictionOutput": {
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "nodeHours": 0.09
+            },
+            "createTime": "2018-05-17T00:49:40Z"
+        },
+        {
+            "trainingOutput": {
+                "consumedMLUnits": 0.09
+            },
+            "trainingInput": {
+                "runtimeVersion": "1.4",
+                "region": "us-east1",
+                "args": [
+                    "--train-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/train_one_file/part-00000",
+                    "--test-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/test_one_file/part-00000",
+                    "--metadata-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/metadata/part-00000"
+                ],
+                "pythonModule": "trainer.autoencoder_keras",
+                "jobDir": "gs://rec-alg/jobs/autoencoder_keras_train_tst20180516_213608",
+                "packageUris": [
+                    "gs://rec-alg/jobs/autoencoder_keras_train_tst20180516_213608/packages/83c23fdce8789e8323399dddabde41ab3d0e46a820ed925108777ebf998089a5/autoencoder_keras-1.0.tar.gz"
+                ]
+            },
+            "jobId": "autoencoder_keras_train_tst20180516_213608",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-17T00:36:44Z",
+            "endTime": "2018-05-17T00:45:59Z",
+            "createTime": "2018-05-17T00:36:13Z"
+        },
+        {
+            "predictionInput": {
+                "modelName": "projects/recomendacao-gcom/models/autoencoder_model_tst",
+                "runtimeVersion": "1.2",
+                "region": "us-east1",
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "dataFormat": "JSON",
+                "inputPaths": [
+                    "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/dataset_to_predict/part-00000"
+                ]
+            },
+            "jobId": "autoencoder_keras_prediction_20180516_182852",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-16T21:28:56Z",
+            "endTime": "2018-05-16T21:47:50Z",
+            "predictionOutput": {
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "nodeHours": 1.99
+            },
+            "createTime": "2018-05-16T21:28:55Z"
+        },
+        {
+            "trainingOutput": {
+                "consumedMLUnits": 0.09
+            },
+            "trainingInput": {
+                "runtimeVersion": "1.4",
+                "region": "us-east1",
+                "args": [
+                    "--train-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/train_one_file/part-00000",
+                    "--test-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/test_one_file/part-00000",
+                    "--metadata-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/metadata/part-00000"
+                ],
+                "pythonModule": "trainer.autoencoder_keras",
+                "jobDir": "gs://rec-alg/jobs/autoencoder_keras_train_tst20180516_180622",
+                "packageUris": [
+                    "gs://rec-alg/jobs/autoencoder_keras_train_tst20180516_180622/packages/24e096f00014cccc0e8dea02505762891359cba6858470e33aa32b6531d2920c/autoencoder_keras-1.0.tar.gz"
+                ]
+            },
+            "jobId": "autoencoder_keras_train_tst20180516_180622",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-16T21:06:55Z",
+            "endTime": "2018-05-16T21:15:36Z",
+            "createTime": "2018-05-16T21:06:26Z"
+        },
+        {
+            "predictionInput": {
+                "modelName": "projects/recomendacao-gcom/models/autoencoder_model_tst",
+                "runtimeVersion": "1.2",
+                "region": "us-east1",
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "dataFormat": "JSON",
+                "inputPaths": [
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/dataset_to_predict/dataset_to_pred"
+                ]
+            },
+            "jobId": "globoplay_autoencoder_model_tst_2018_05_16_17_20_53_prediction",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-16T20:20:56Z",
+            "endTime": "2018-05-16T20:28:43Z",
+            "predictionOutput": {
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "nodeHours": 0.13,
+                "predictionCount": "10"
+            },
+            "createTime": "2018-05-16T20:20:55Z"
+        },
+        {
+            "trainingOutput": {
+                "consumedMLUnits": 0.09
+            },
+            "trainingInput": {
+                "runtimeVersion": "1.0",
+                "region": "us-east1",
+                "args": [
+                    "--train-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/train_one_file/part-00000",
+                    "--test-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/test_one_file/part-00000",
+                    "--metadata-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/metadata/part-00000"
+                ],
+                "pythonModule": "trainer.autoencoder_keras",
+                "jobDir": "gs://rec-alg/jobs/globoplay_autoencoder_keras_2018_05_16_15_41_05",
+                "packageUris": [
+                    "gs://rec-alg/packages/autoencoder-1.9.tar.gz"
+                ]
+            },
+            "jobId": "globoplay_autoencoder_keras_2018_05_16_15_41_05",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-16T18:41:41Z",
+            "endTime": "2018-05-16T18:46:21Z",
+            "createTime": "2018-05-16T18:41:06Z"
+        },
+        {
+            "trainingOutput": {
+                "consumedMLUnits": 0.09
+            },
+            "trainingInput": {
+                "runtimeVersion": "1.0",
+                "region": "us-east1",
+                "args": [
+                    "--train-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/train_one_file/part-00000",
+                    "--test-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/test_one_file/part-00000",
+                    "--metadata-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/metadata/part-00000"
+                ],
+                "pythonModule": "trainer.autoencoder_keras",
+                "jobDir": "gs://rec-alg/jobs/globoplay_autoencoder_keras_2018_05_15_10_16_14",
+                "packageUris": [
+                    "gs://rec-alg/packages/autoencoder-1.9.tar.gz"
+                ]
+            },
+            "jobId": "globoplay_autoencoder_keras_2018_05_15_10_16_14",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-15T13:16:54Z",
+            "endTime": "2018-05-15T13:21:35Z",
+            "createTime": "2018-05-15T13:16:16Z"
+        },
+        {
+            "predictionInput": {
+                "modelName": "projects/recomendacao-gcom/models/autoencoder_model_tst",
+                "runtimeVersion": "1.2",
+                "region": "us-east1",
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "dataFormat": "JSON",
+                "inputPaths": [
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/dataset_to_predict/dataset_to_pred"
+                ]
+            },
+            "jobId": "autoencoder_keras_prediction_20180514_233717",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-15T02:37:21Z",
+            "endTime": "2018-05-15T02:43:50Z",
+            "predictionOutput": {
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "nodeHours": 0.13,
+                "predictionCount": "10"
+            },
+            "createTime": "2018-05-15T02:37:19Z"
+        },
+        {
+            "trainingOutput": {
+                "consumedMLUnits": 0.09
+            },
+            "trainingInput": {
+                "runtimeVersion": "1.4",
+                "region": "us-east1",
+                "args": [
+                    "--train-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/train_one_file/part-00000",
+                    "--test-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/test_one_file/part-00000",
+                    "--metadata-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/metadata/part-00000"
+                ],
+                "pythonModule": "trainer.autoencoder_keras",
+                "jobDir": "gs://rec-alg/jobs/autoencoder_keras_train_tst20180514_233150",
+                "packageUris": [
+                    "gs://rec-alg/jobs/autoencoder_keras_train_tst20180514_233150/packages/86260f74ebb4305f27387672499e8ebc40a509d16661064c3bbc0d86aa0a120e/autoencoder_keras-1.0.tar.gz"
+                ]
+            },
+            "jobId": "autoencoder_keras_train_tst20180514_233150",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-15T02:32:31Z",
+            "endTime": "2018-05-15T02:37:16Z",
+            "createTime": "2018-05-15T02:31:54Z"
+        },
+        {
+            "predictionInput": {
+                "modelName": "projects/recomendacao-gcom/models/autoencoder_model_tst",
+                "runtimeVersion": "1.2",
+                "region": "us-east1",
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "dataFormat": "JSON",
+                "inputPaths": [
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/dataset_to_predict/dataset_to_pred"
+                ]
+            },
+            "jobId": "autoencoder_keras_prediction_20180514_232218",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-15T02:22:22Z",
+            "endTime": "2018-05-15T02:29:46Z",
+            "predictionOutput": {
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "nodeHours": 0.14
+            },
+            "createTime": "2018-05-15T02:22:20Z"
+        },
+        {
+            "trainingOutput": {
+                "consumedMLUnits": 0.09
+            },
+            "trainingInput": {
+                "runtimeVersion": "1.4",
+                "region": "us-east1",
+                "args": [
+                    "--train-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/train_one_file/part-00000",
+                    "--test-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/test_one_file/part-00000",
+                    "--metadata-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/metadata/part-00000"
+                ],
+                "pythonModule": "trainer.autoencoder_keras",
+                "jobDir": "gs://rec-alg/jobs/autoencoder_keras_train_tst20180514_230629",
+                "packageUris": [
+                    "gs://rec-alg/jobs/autoencoder_keras_train_tst20180514_230629/packages/5e8fecb9672b985b0147b3bc37876193c5c4ac4d47cad9402a7e8dc862dd951a/autoencoder_keras-1.0.tar.gz"
+                ]
+            },
+            "jobId": "autoencoder_keras_train_tst20180514_230629",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-15T02:07:05Z",
+            "endTime": "2018-05-15T02:12:15Z",
+            "createTime": "2018-05-15T02:06:33Z"
+        },
+        {
+            "predictionInput": {
+                "modelName": "projects/recomendacao-gcom/models/autoencoder_model_tst",
+                "runtimeVersion": "1.2",
+                "region": "us-east1",
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "dataFormat": "JSON",
+                "inputPaths": [
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/dataset_to_predict/part-00000"
+                ]
+            },
+            "jobId": "autoencoder_keras_prediction_20180514_224256",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-15T01:43:00Z",
+            "endTime": "2018-05-15T01:50:37Z",
+            "predictionOutput": {
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "nodeHours": 0.13
+            },
+            "createTime": "2018-05-15T01:42:59Z"
+        },
+        {
+            "predictionInput": {
+                "modelName": "projects/recomendacao-gcom/models/autoencoder_model_tst",
+                "runtimeVersion": "1.2",
+                "region": "us-east1",
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "dataFormat": "JSON",
+                "inputPaths": [
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/dataset_to_predict/part-00000"
+                ]
+            },
+            "jobId": "autoencoder_keras_prediction_20180514_223201",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-15T01:32:04Z",
+            "endTime": "2018-05-15T01:38:45Z",
+            "predictionOutput": {
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "nodeHours": 0.13,
+                "predictionCount": "15698"
+            },
+            "createTime": "2018-05-15T01:32:03Z"
+        },
+        {
+            "trainingOutput": {
+                "consumedMLUnits": 0.09
+            },
+            "trainingInput": {
+                "runtimeVersion": "1.4",
+                "region": "us-east1",
+                "args": [
+                    "--train-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/train_one_file/part-00000",
+                    "--test-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/test_one_file/part-00000",
+                    "--metadata-file",
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/metadata/part-00000"
+                ],
+                "pythonModule": "trainer.autoencoder_keras",
+                "jobDir": "gs://rec-alg/jobs/autoencoder_keras_train_tst20180514_222626",
+                "packageUris": [
+                    "gs://rec-alg/jobs/autoencoder_keras_train_tst20180514_222626/packages/fe4a79253de12b45432dd623432e24da20faa0963dac13918bded5fc1cd1e1c0/autoencoder_keras-1.0.tar.gz"
+                ]
+            },
+            "jobId": "autoencoder_keras_train_tst20180514_222626",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-15T01:27:28Z",
+            "endTime": "2018-05-15T01:32:08Z",
+            "createTime": "2018-05-15T01:26:30Z"
+        },
+        {
+            "predictionInput": {
+                "modelName": "projects/recomendacao-gcom/models/autoencoder_model_tst",
+                "runtimeVersion": "1.2",
+                "region": "us-east1",
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "dataFormat": "JSON",
+                "inputPaths": [
+                    "gs://rec-alg/recommendation/matrix_prefs/globoplay/dataset_to_predict/part-00000"
+                ]
+            },
+            "jobId": "autoencoder_keras_prediction_20180514_215917",
+            "state": "SUCCEEDED",
+            "startTime": "2018-05-15T00:59:20Z",
+            "endTime": "2018-05-15T01:06:23Z",
+            "predictionOutput": {
+                "outputPath": "gs://rec-alg/recommendation/matrix_prefs/tmp/globoplay/prediction_results",
+                "nodeHours": 0.13,
+                "predictionCount": "15698"
+            },
+            "createTime": "2018-05-15T00:59:19Z"
+        }
+    ]
+}

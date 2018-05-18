@@ -125,3 +125,20 @@ class TestMlEngine(unittest.TestCase):
 
         self.assertRaises(TypeError ,ml_engine_test.start_predict_job, "PRODUTO", "MODEL_NAME", input_file, output_file)
 
+    def test_job_list(self):
+        """TEST JOB LIST AND FILTER BY FINAL STATE"""
+        jobs_mock = open('tests/mock/ml_engine/jobs.json', 'rb').read()
+
+        http = HttpMockSequence([
+            ({'status': '200'},open('tests/mock/ml_engine/first_result.json', 'rb').read()),
+            ({'status': '200'},jobs_mock),
+            ({'status': '200'},jobs_mock),
+            ({'status': '200'},jobs_mock)
+        ])
+
+        ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION", http=http)
+        self.assertEqual(len(ml_engine_test.list_jobs()),19)
+        self.assertEqual(len(ml_engine_test.list_jobs(filter_final_state=None)),20)
+        self.assertEqual(len(ml_engine_test.list_jobs(filter_final_state="STATE_WRONG")),0)
+
+

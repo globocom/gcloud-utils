@@ -110,10 +110,13 @@ class MlEngine(object):
          .setDefault(body={},name=version_full_path)
         return request
 
-    def list_jobs(self):
+    def list_jobs(self, filter_final_state='SUCCEEDED'):
         """List all models in project"""
         jobs = self.client.projects().jobs().list(parent=self.parent).execute()
-        return [x['jobId'] for x in jobs['jobs']]
+        list_of_jobs = jobs['jobs']
+        if filter_final_state:
+            list_of_jobs = [x for x in list_of_jobs if x['state'] == filter_final_state]
+        return [x['jobId'] for x in list_of_jobs]
 
     def list_models(self):
         """List all models in project"""
