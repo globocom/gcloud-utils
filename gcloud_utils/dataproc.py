@@ -3,16 +3,14 @@ Module to handle with Dataproc cluster
 """
 
 import time
-import os
 import logging
 from googleapiclient import discovery
-import httplib2
-
-REGION = "us-east1"
-PROJECT = "recomendacao-gcom"
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+REGION = "us-east1"
+PROJECT = "recomendacao-gcom"
+
 
 
 class Dataproc(object):
@@ -31,7 +29,7 @@ class Dataproc(object):
                 .list(projectId=self.__project, region=self.__region).execute()
         return result
 
-    def __wait_midle_state(self, cluster_name, sleep_time=5):
+    def wait_midle_state(self, cluster_name, final_state, sleep_time=5):
         midle_state = True
         while midle_state:
             result = self.__client.projects()\
@@ -39,7 +37,7 @@ class Dataproc(object):
                 .clusters()\
                 .get(clusterName=cluster_name, projectId=self.__project, region=self.__region)\
                 .execute()
-            midle_state = not result['status']['state'] == u'RUNNING'
+            midle_state = not result['status']['state'] == final_state
             self.__logger.info(
                 "Cluster Name : %s  Status : %s",
                 cluster_name,
@@ -96,3 +94,11 @@ class Dataproc(object):
             .delete(clusterName=name, projectId=self.__project, region=self.__region)
 
         return result
+
+
+DP = Dataproc()
+print(DP.create_cluster("test",2,["m1","m2"]).execute())
+print(DP.wait_midle_state("test","RUNNING"))
+print(DP.delete_cluster("test").execute())
+print(DP.wait_midle_state("test","DELETING"))
+
