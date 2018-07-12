@@ -68,5 +68,3 @@ class Compute(object):
     def stop_instance(self, instance_name):
         """Stop VM by name"""
         self.__change_status(instance_name, self.client.instances().stop, "TERMINATED")
-
-c = Compute()
