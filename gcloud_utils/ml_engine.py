@@ -36,7 +36,11 @@ class MlEngine(object):
 
         version_list = request.list(parent=parent_model).execute()
 
-        result = [x['name'].split("/")[-1] for x in version_list['versions']]
+        result = []
+        try:
+            result = [x['name'].split("/")[-1] for x in version_list['versions']]
+        except KeyError as e:
+            self.__logger.error("Error on get version: %s\nVersions list is empty",e) 
 
         while 'nextPageToken' in version_list:
             token = version_list['nextPageToken']
