@@ -1,9 +1,7 @@
 """Test compute.py"""
 import unittest
-from freezegun import freeze_time
-from googleapiclient.http import HttpMock, HttpMockSequence
+from googleapiclient.http import HttpMockSequence
 from gcloud_utils import dataproc
-from mock import patch
 
 class TestDataproc(unittest.TestCase):
     """Test Compute Class"""
