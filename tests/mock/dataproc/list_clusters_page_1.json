@@ -1,0 +1,94 @@
+{   "nextPageToken":"token",
+    "clusters": [{
+        "status": {
+            "state": "RUNNING",
+            "stateStartTime": "2018-07-13T14:26:45.089Z"
+        },
+        "clusterUuid": "61daad1e-b7c3-4ca6-95fb-3b665a877cb9",
+        "clusterName": "test",
+        "projectId": "recomendacao-gcom",
+        "labels": {
+            "goog-dataproc-cluster-name": "test",
+            "goog-dataproc-cluster-uuid": "61daad1e-b7c3-4ca6-95fb-3b665a877cb9",
+            "goog-dataproc-location": "us-east1"
+        },
+        "statusHistory": [{
+            "state": "CREATING",
+            "stateStartTime": "2018-07-13T14:25:36.058Z"
+        }],
+        "config": {
+            "masterConfig": {
+                "machineTypeUri": "https://www.googleapis.com/compute/v1/projects/recomendacao-gcom/zones/us-east1-b/machineTypes/n1-standard-4",
+                "diskConfig": {
+                    "bootDiskType": "pd-standard",
+                    "bootDiskSizeGb": 10
+                },
+                "numInstances": 1,
+                "instanceNames": ["test-m"],
+                "imageUri": "https://www.googleapis.com/compute/v1/projects/cloud-dataproc/global/images/dataproc-1-2-20180709-000000-rc01"
+            },
+            "softwareConfig": {
+                "imageVersion": "1.2.43",
+                "properties": {
+                    "core:fs.gs.metadata.cache.enable": "false",
+                    "mapred:yarn.app.mapreduce.am.resource.cpu-vcores": "1",
+                    "mapred:mapreduce.job.reduce.slowstart.completedmaps": "0.95",
+                    "yarn:yarn.scheduler.minimum-allocation-mb": "1024",
+                    "hdfs:dfs.namenode.https-address": "0.0.0.0:9871",
+                    "spark:spark.executor.memory": "5586m",
+                    "hdfs:dfs.datanode.http.address": "0.0.0.0:9864",
+                    "mapred:mapreduce.task.io.sort.mb": "256",
+                    "capacity-scheduler:yarn.scheduler.capacity.root.default.ordering-policy": "fair",
+                    "mapred:mapreduce.reduce.cpu.vcores": "1",
+                    "mapred:mapreduce.reduce.memory.mb": "3072",
+                    "distcp:mapreduce.reduce.memory.mb": "3072",
+                    "distcp:mapreduce.map.memory.mb": "3072",
+                    "hdfs:dfs.namenode.service.handler.count": "10",
+                    "hdfs:dfs.datanode.ipc.address": "0.0.0.0:9867",
+                    "hdfs:dfs.datanode.https.address": "0.0.0.0:9865",
+                    "core:fs.gs.block.size": "134217728",
+                    "mapred:yarn.app.mapreduce.am.resource.mb": "3072",
+                    "mapred:mapreduce.map.memory.mb": "3072",
+                    "yarn-env:YARN_TIMELINESERVER_HEAPSIZE": "3840",
+                    "mapred:mapreduce.job.maps": "21",
+                    "yarn:yarn.nodemanager.resource.memory-mb": "12288",
+                    "mapred:mapreduce.job.reduces": "7",
+                    "spark:spark.driver.memory": "3840m",
+                    "spark-env:SPARK_DAEMON_MEMORY": "3840m",
+                    "hdfs:dfs.namenode.handler.count": "20",
+                    "spark:spark.executor.cores": "2",
+                    "distcp:mapreduce.reduce.java.opts": "-Xmx2457m",
+                    "yarn:yarn.scheduler.maximum-allocation-mb": "12288",
+                    "hdfs:dfs.namenode.secondary.http-address": "0.0.0.0:9868",
+                    "mapred:yarn.app.mapreduce.am.command-opts": "-Xmx2457m",
+                    "spark:spark.driver.maxResultSize": "1920m",
+                    "mapred:mapreduce.reduce.java.opts": "-Xmx2457m",
+                    "mapred-env:HADOOP_JOB_HISTORYSERVER_HEAPSIZE": "3840",
+                    "distcp:mapreduce.map.java.opts": "-Xmx2457m",
+                    "mapred:mapreduce.map.cpu.vcores": "1",
+                    "spark:spark.yarn.am.memory": "640m",
+                    "hdfs:dfs.namenode.secondary.https-address": "0.0.0.0:9869",
+                    "hdfs:dfs.datanode.address": "0.0.0.0:9866",
+                    "hdfs:dfs.namenode.http-address": "0.0.0.0:9870",
+                    "mapred:mapreduce.map.java.opts": "-Xmx2457m"
+                }
+            },
+            "workerConfig": {
+                "machineTypeUri": "https://www.googleapis.com/compute/v1/projects/recomendacao-gcom/zones/us-east1-b/machineTypes/n1-standard-4",
+                "diskConfig": {
+                    "bootDiskType": "pd-standard",
+                    "bootDiskSizeGb": 10
+                },
+                "numInstances": 2,
+                "instanceNames": ["test-w-0", "test-w-1"],
+                "imageUri": "https://www.googleapis.com/compute/v1/projects/cloud-dataproc/global/images/dataproc-1-2-20180709-000000-rc01"
+            },
+            "configBucket": "dataproc-e63dad39-56bf-454c-b8db-190f391c41d1-us-east1",
+            "gceClusterConfig": {
+                "subnetworkUri": "https://www.googleapis.com/compute/v1/projects/recomendacao-gcom/regions/us-east1/subnetworks/default",
+                "serviceAccountScopes": ["https://www.googleapis.com/auth/bigquery", "https://www.googleapis.com/auth/bigtable.admin.table", "https://www.googleapis.com/auth/bigtable.data", "https://www.googleapis.com/auth/cloud.useraccounts.readonly", "https://www.googleapis.com/auth/devstorage.full_control", "https://www.googleapis.com/auth/devstorage.read_write", "https://www.googleapis.com/auth/logging.write"],
+                "zoneUri": "https://www.googleapis.com/compute/v1/projects/recomendacao-gcom/zones/us-east1-b"
+            }
+        }
+    }]
+}
