@@ -23,11 +23,24 @@ class Dataproc(object):
 
     def list_clusters(self):
         "List all clusters"
-        result = self.__client.projects()\
+        request = self.__client.projects()\
             .regions()\
-            .clusters()\
-                .list(projectId=self.__project, region=self.__region).execute()
-        return result
+            .clusters()
+                
+
+        result = request.list(projectId=self.__project, region=self.__region).execute()
+        cluster_list = []
+
+        if 'clusters' in result:
+            cluster_list.append(result['clusters'])
+
+        while 'nextPageToken' in result:
+            token = result['nextPageToken']
+            result = request.list(projectId=self.__project, region=self.__region, pageToken=token).execute()
+            if 'clusters' in result:
+                cluster_list.append(result['clusters'])
+
+        return cluster_list
 
     def wait_midle_state(self, cluster_name, final_state, sleep_time=5):
         midle_state = True
@@ -39,7 +52,7 @@ class Dataproc(object):
                 .execute()
             midle_state = not result['status']['state'] == final_state
             self.__logger.info(
-                "Cluster Name : %s  Status : %s",
+                "Cluster_Name:%s  Status:%s",
                 cluster_name,
                 result['status']['state'])
             time.sleep(sleep_time)
@@ -96,9 +109,10 @@ class Dataproc(object):
         return result
 
 
-DP = Dataproc()
-print(DP.create_cluster("test",2,["m1","m2"]).execute())
-print(DP.wait_midle_state("test","RUNNING"))
-print(DP.delete_cluster("test").execute())
-print(DP.wait_midle_state("test","DELETING"))
+# DP = Dataproc()
+# print(DP.create_cluster("test",2,["m1","m2"]).execute())
+# print(DP.wait_midle_state("test","RUNNING"))
+# print(DP.list_clusters())
+# print(DP.delete_cluster("test").execute())
+# print(DP.wait_midle_state("test","DELETING"))
 

@@ -24,4 +24,7 @@ endif
 
 
 test:
-	python -m unittest -v tests.test_compute tests.test_storage tests.test_ml_engine
+	python -m unittest -v tests.test_compute tests.test_storage tests.test_ml_engine tests.test_dataproc
+
+coverage_test:
+	coverage run --source=./gcloud_utils/ -m unittest -v tests.test_compute tests.test_storage tests.test_ml_engine tests.test_dataproc
