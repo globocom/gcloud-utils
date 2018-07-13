@@ -111,3 +111,6 @@ credentials.json
 
 # MacOs 
 .DS_Store
+
+#Sonar Scaner
+.scannerwork
