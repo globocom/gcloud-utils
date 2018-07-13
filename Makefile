@@ -34,3 +34,6 @@ test_coverage:
 update_sonar_coverage: test_coverage
 	git add coverage.xml
 
+push_sonar:
+	sonar-scanner
+

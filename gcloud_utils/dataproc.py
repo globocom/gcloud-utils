@@ -23,10 +23,7 @@ class Dataproc(object):
 
     def list_clusters(self):
         "List all clusters"
-        request = self.__client.projects()\
-            .regions()\
-            .clusters()
-                
+        request = self.__client.projects().regions().clusters()
 
         result = request.list(projectId=self.__project, region=self.__region).execute()
         cluster_list = []
@@ -36,13 +33,17 @@ class Dataproc(object):
 
         while 'nextPageToken' in result:
             token = result['nextPageToken']
-            result = request.list(projectId=self.__project, region=self.__region, pageToken=token).execute()
+            result = request.list(
+                projectId=self.__project,
+                region=self.__region,
+                pageToken=token).execute()
+
             if 'clusters' in result:
                 cluster_list.append(result['clusters'])
 
         return cluster_list
 
-    def wait_midle_state(self, cluster_name, final_state, sleep_time=5):
+    def __wait_midle_state(self, cluster_name, final_state, sleep_time=5):
         midle_state = True
         while midle_state:
             result = self.__client.projects()\
@@ -67,7 +68,7 @@ class Dataproc(object):
                 "configBucket": "",
                 "gceClusterConfig": {
                     "subnetworkUri": "default",
-                    "zoneUri": "us-east1-b"
+                    "zoneUri": "{}-b".format(self.__region)
                     },
                 "masterConfig": {
                     "numInstances": 1,
@@ -78,7 +79,6 @@ class Dataproc(object):
                     "diskConfig": {
                         "bootDiskSizeGb": 10,
                         "numLocalSsds": 0
-
                     }
                 },
                 "workerConfig": {
@@ -92,10 +92,14 @@ class Dataproc(object):
                 }
             }
         }
+
         result = self.__client.projects()\
             .regions()\
             .clusters()\
-            .create(body=data_to_create, projectId=self.__project, region=self.__region)
+            .create(body=data_to_create, projectId=self.__project, region=self.__region)\
+            .execute()
+
+        self.__wait_midle_state(name, "RUNNING")
 
         return result
 
@@ -104,15 +108,9 @@ class Dataproc(object):
         result = self.__client.projects()\
             .regions()\
             .clusters()\
-            .delete(clusterName=name, projectId=self.__project, region=self.__region)
+            .delete(clusterName=name, projectId=self.__project, region=self.__region)\
+            .execute()
+
+        self.__wait_midle_state(name, "DELETING")
 
         return result
-
-
-# DP = Dataproc()
-# print(DP.create_cluster("test",2,["m1","m2"]).execute())
-# print(DP.wait_midle_state("test","RUNNING"))
-# print(DP.list_clusters())
-# print(DP.delete_cluster("test").execute())
-# print(DP.wait_midle_state("test","DELETING"))
-

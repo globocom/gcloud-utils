@@ -1,4 +1,5 @@
-{    "clusters": [{
+{   "echo_request_body":"", 
+    "clusters": [{
         "status": {
             "state": "RUNNING",
             "stateStartTime": "2018-07-13T14:26:45.089Z"
