@@ -1,0 +1,8 @@
+{
+    "reference":{
+        "jobId":"JOB_ID"
+    },
+    "status":{
+        "state":"RUNNING"
+    }
+}

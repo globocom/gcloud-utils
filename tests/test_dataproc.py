@@ -2,6 +2,7 @@
 import unittest
 from googleapiclient.http import HttpMockSequence
 from gcloud_utils import dataproc
+from freezegun import freeze_time
 
 class TestDataproc(unittest.TestCase):
     """Test Compute Class"""
@@ -45,32 +46,32 @@ class TestDataproc(unittest.TestCase):
         dataproc_test = dataproc.Dataproc(project="project", region="region", http=http_mocked)
         result = dataproc_test.create_cluster("NAME", 2, ["B1", "B2"])
         expected = {
-            u'clusterName': u'NAME',
-            u'projectId': u'project'
-            , u'config': {
-                u'workerConfig': {
-                    u'machineTypeUri': u'n1-standard-4',
-                    u'numInstances': 2,
-                    u'instanceNames': [u'B1', u'B2'],
-                    u'diskConfig': {
-                        u'numLocalSsds': 0,
-                        u'bootDiskSizeGb': 10
+            'clusterName': 'NAME',
+            'projectId': 'project'
+            , 'config': {
+                'workerConfig': {
+                    'machineTypeUri': 'n1-standard-4',
+                    'numInstances': 2,
+                    'instanceNames': ['B1', 'B2'],
+                    'diskConfig': {
+                        'numLocalSsds': 0,
+                        'bootDiskSizeGb': 10
                     }
                 },
-                u'masterConfig': {
-                    u'machineTypeUri': u'n1-standard-4',
-                    u'numInstances': 1,
-                    u'instanceNames': [u'cluster-yarn-recsys-m'],
-                    u'diskConfig': {
-                        u'numLocalSsds': 0,
-                        u'bootDiskSizeGb': 10
+                'masterConfig': {
+                    'machineTypeUri': 'n1-standard-4',
+                    'numInstances': 1,
+                    'instanceNames': ['cluster-yarn-recsys-m'],
+                    'diskConfig': {
+                        'numLocalSsds': 0,
+                        'bootDiskSizeGb': 10
                     }
                 },
-                u'gceClusterConfig': {
-                    u'subnetworkUri': u'default',
-                    u'zoneUri': u'region-b'
+                'gceClusterConfig': {
+                    'subnetworkUri': 'default',
+                    'zoneUri': 'region-b'
                 },
-                u'configBucket': u''
+                'configBucket': ''
                 }
             }
         self.assertEqual(result,expected)
@@ -83,4 +84,52 @@ class TestDataproc(unittest.TestCase):
         ])
         dataproc_test = dataproc.Dataproc(project="project", region="region", http=http_mocked)
         result = dataproc_test.delete_cluster("NAME")
-        self.assertEqual(result['content-length'],u'0')
+        self.assertEqual(result['content-length'],'0')
+
+    @freeze_time("1994-04-27 12:00:01")
+    def test_submit_job_success(self):
+        http_mocked = HttpMockSequence([
+            ({'status': '200'}, open('tests/mock/dataproc/first_request.json', 'rb').read()),
+            ({'status': '200'}, 'echo_request_body'),
+            ({'status': '200'}, open('tests/mock/dataproc/job_status_running.json', 'rb').read()),
+            ({'status': '200'}, open('tests/mock/dataproc/job_status_running.json', 'rb').read()),
+            ({'status': '200'}, open('tests/mock/dataproc/job_status_done.json', 'rb').read())
+        ])
+
+        dataproc_test = dataproc.Dataproc(project="project", region="region", http=http_mocked)
+        result = dataproc_test.submit_job(
+            "CLUSTER",
+            "BUCKET",
+            ["/path/to/jar/jarname.jar"],
+            "main",
+            ["arg1", "arg2"]
+            )
+
+        body_request_expected = {
+            'projectId': 'project',
+            'job': {
+                'placement': {'clusterName': 'CLUSTER'},
+                'sparkJob': {
+                    'jarFileUris': ['/path/to/jar/jarname.jar'],
+                    'mainClass': 'main',
+                    'args': ['arg1', 'arg2']},
+                'reference': {'jobId': 'main_1994_04_27_12_00_01'}
+            }
+        }
+
+        self.assertEqual(body_request_expected, result)
+
+    @freeze_time("1994-04-27 12:00:01")
+    def test_submit_job_error(self):
+        http_mocked = HttpMockSequence([
+            ({'status': '200'}, open('tests/mock/dataproc/first_request.json', 'rb').read()),
+            ({'status': '200'}, 'echo_request_body'),
+            ({'status': '200'}, open('tests/mock/dataproc/job_status_running.json', 'rb').read()),
+            ({'status': '200'}, open('tests/mock/dataproc/job_status_error.json', 'rb').read()),
+            ({'status': '200'}, open('tests/mock/dataproc/job_status_done.json', 'rb').read())
+        ])
+
+        dataproc_test = dataproc.Dataproc(project="project", region="region", http=http_mocked)
+
+        with self.assertRaises(Exception):
+            dataproc_test.submit_job("", "", [""], "", [])

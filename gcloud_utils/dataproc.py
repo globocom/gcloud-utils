@@ -5,6 +5,9 @@ Module to handle with Dataproc cluster
 import time
 import logging
 from googleapiclient import discovery
+import os
+import datetime
+
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
@@ -114,3 +117,82 @@ class Dataproc(object):
         self.__wait_midle_state(name, "DELETING")
 
         return result
+
+    def submit_job(self, cluster_name, gs_bucket, jar_paths, main_class, list_args):
+        """Submits the Spark job to the cluster, assuming jars at `jar_paths` list has 
+        already been uploaded to `gs_bucket`"""
+
+        gs_root = "gs://{}/".format(gs_bucket)
+        jar_files = [os.path.join(gs_root, x) for x in jar_paths]
+
+        datetime_now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+        job_id = "{}_{}".format(main_class,datetime_now)
+
+        job_details = {
+            'projectId': self.__project,
+            'job': {
+                'placement': {
+                    'clusterName': cluster_name
+                },
+                'reference': {
+                    'jobId': job_id
+                },
+                'sparkJob': {
+                    'args':list_args,
+                    'mainClass':main_class,
+                    'jarFileUris':jar_files
+                }
+            }
+        }
+
+        result = self.__client.projects().regions().jobs().submit(
+            projectId=self.__project,
+            region=self.__region,
+            body=job_details).execute()
+
+        self.__logger.info('Submitted job ID %s', job_id)
+
+        self.__wait_job_finish(job_id)
+        return result
+
+    def __wait_job_finish(self, job_id, sleep_time=5):
+        request = self.__client.projects().regions().jobs().get(
+            projectId=self.__project,
+            region=self.__region,
+            jobId=job_id)
+
+        result = request.execute()
+        status = result['status']['state']
+        self.__logger.info("JOB %s  -  STATUS:%s",job_id,status)
+
+        while status != 'ERROR' and status != 'DONE':
+            result = request.execute()
+            status = result['status']['state']
+            progress = result['yarnApplications'][0]['progress']
+
+            if status == 'ERROR':
+                raise Exception(result['status']['details'])
+            elif status == 'DONE':
+                self.__logger.info("Job finished.")
+                return result
+
+            self.__logger.info("JOB %s  -  STATUS:%s",job_id,status)
+            self.__logger.info("Progress: %s%%",progress*100)
+            time.sleep(sleep_time)
+
+
+
+
+# dp = Dataproc()
+
+# dp.create_cluster("testc",2,["w1","w2"])
+# dp.submit_job(
+#     "testc",
+#     "rec-alg",
+#     ["jobs/recommendation.preferences-to-matrix-google-batch.jar"],
+#     "rec.engine.spark.preferences.PrefsToMatrixMain",
+#     ["globoplay"])
+
+# dp.wait_job_finish("3f145a43-bd9f-453b-b8d1-68d6a5b327e0")
+
+# dp.delete_cluster("testc")
