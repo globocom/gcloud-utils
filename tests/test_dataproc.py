@@ -74,3 +74,13 @@ class TestDataproc(unittest.TestCase):
                 }
             }
         self.assertEqual(result,expected)
+
+    def test_delete_cluster(self):
+        http_mocked = HttpMockSequence([
+            ({'status': '200'}, open('tests/mock/dataproc/first_request.json', 'rb').read()),
+            ({'status': '200'}, 'echo_request_headers_as_json'),
+            ({'status': '200'}, open('tests/mock/dataproc/cluster_deleting.json', 'rb').read())
+        ])
+        dataproc_test = dataproc.Dataproc(project="project", region="region", http=http_mocked)
+        result = dataproc_test.delete_cluster("NAME")
+        self.assertEqual(result['content-length'],u'0')
