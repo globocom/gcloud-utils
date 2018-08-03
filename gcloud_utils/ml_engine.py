@@ -54,7 +54,7 @@ class MlEngine(object):
         return ["v0_0"]
 
     def __increase_version(self, version):
-        pattern = r"^v\d_\d$"
+        pattern = r"^v\d+_\d$"
         result = re.match(pattern, version)
         if result is None:
             raise ValueError(
