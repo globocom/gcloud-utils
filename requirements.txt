@@ -1,2 +1,4 @@
 google-api-python-client==1.6.5
 gcloud==0.18.3
+freezegun==0.3.10
+mock==2.0.0
