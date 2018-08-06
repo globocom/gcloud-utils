@@ -1,8 +1,9 @@
 """Submit Job to ML Engine"""
-import logging
-import datetime
-import re
 from googleapiclient import discovery
+import datetime
+import logging
+import re
+import time
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
@@ -142,6 +143,22 @@ class MlEngine(object):
         .list(parent=self.parent)\
         .execute()
         return request
+
+    def get_job(self, job_id):
+        """Describes a job"""
+        name = "{}/jobs/{}".format(self.parent, job_id)
+        job = self.client.projects().jobs().get(name=name).execute()
+        return job
+
+    def wait_job_to_finish(self, job_id, sleep_time=60):
+        """Waits job to finish"""
+        state = ""
+        while state not in ['SUCCEEDED', 'FAILED', 'CANCELLED']:
+            job = self.get_job(job_id)
+            state = job['state']
+            self.__logger.info("%s state: %s", job_id, state)
+        self.__logger.info("Job finished with status %s", state)
+        return state
 
     def start_training_job(self, job_id_prefix, package_name, module, **args):
         """Start a training job"""

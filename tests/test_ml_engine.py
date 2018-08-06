@@ -141,4 +141,33 @@ class TestMlEngine(unittest.TestCase):
         self.assertEqual(len(ml_engine_test.list_jobs(filter_final_state=None)),20)
         self.assertEqual(len(ml_engine_test.list_jobs(filter_final_state="STATE_WRONG")),0)
 
+    def test_get_job(self):
+        """Test getting a job"""
+
+        http = HttpMockSequence([
+            ({'status': '200'},open('tests/mock/ml_engine/first_result.json', 'rb').read()),
+            ({'status': '200'},open('tests/mock/ml_engine/get_job_succeeded.json', 'rb').read()),
+        ])
+
+        job_id = "globoplay_autoencoder_keras_2018_08_06_10_00_37"
+
+        ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION", http=http)
+        job = ml_engine_test.get_job(job_id)
+        self.assertEqual(job['jobId'], job_id)
+
+    def test_wait_job_to_finish(self):
+        """Test waiting job to finish execution"""
+
+        http = HttpMockSequence([
+            ({'status': '200'},open('tests/mock/ml_engine/first_result.json', 'rb').read()),
+            ({'status': '200'},open('tests/mock/ml_engine/get_job_running.json', 'rb').read()),
+            ({'status': '200'},open('tests/mock/ml_engine/get_job_succeeded.json', 'rb').read())
+        ])
+
+        job_id = "globoplay_autoencoder_keras_2018_08_06_10_00_37"
+
+        ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION", http=http)
+        state = ml_engine_test.wait_job_to_finish(job_id, sleep_time=0)
+        self.assertEqual(state, "SUCCEEDED")
+
 

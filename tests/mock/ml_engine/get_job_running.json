@@ -1,0 +1,27 @@
+{
+    "jobId": "globoplay_autoencoder_keras_2018_08_06_10_00_37",
+    "trainingInput": {
+        "packageUris": [
+            "gs://rec-alg/packages/autoencoder-2.3.3.tar.gz"
+        ],
+        "pythonModule": "trainer.autoencoder_keras",
+        "args": [
+            "--train-file",
+            "gs://rec-alg/recommendation/matrix_prefs/globoplay/train_one_file/part-00000",
+            "--test-file",
+            "gs://rec-alg/recommendation/matrix_prefs/globoplay/test_one_file/part-00000",
+            "--metadata-file",
+            "gs://rec-alg/recommendation/matrix_prefs/globoplay/metadata/part-00000"
+        ],
+        "region": "us-east1",
+        "runtimeVersion": "1.0",
+        "jobDir": "gs://rec-alg/jobs/globoplay_autoencoder_keras_2018_08_06_10_00_37"
+    },
+    "createTime": "2018-08-06T13:00:38Z",
+    "startTime": "2018-08-06T13:01:05Z",
+    "state": "RUNNING",
+    "trainingOutput": {
+        "consumedMLUnits": 0.16
+    },
+    "etag": "PIZql/0m22Q="
+}
