@@ -4,7 +4,7 @@ import datetime
 import re
 from googleapiclient import discovery
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
 REGION = "us-east1"
@@ -52,6 +52,11 @@ class MlEngine(object):
             return result
 
         return ["v0_0"]
+
+    def __get_last_version(self, versions):
+        versions_float = [float(version[1:].replace("_", ".")) for version in versions]
+        last_version = str(max(versions_float))
+        return "v{}".format(last_version.replace(".", "_"))
 
     def __increase_version(self, version):
         pattern = r"^v\d+_\d$"
@@ -105,7 +110,7 @@ class MlEngine(object):
         """Increase Model version"""
 
         versions = self.get_model_versions(model_name)
-        last_version = max(versions)
+        last_version = self.__get_last_version(versions)
         new_version = self.__increase_version(last_version)
         
         request = self.create_model_version(model_name,new_version,job_id)
