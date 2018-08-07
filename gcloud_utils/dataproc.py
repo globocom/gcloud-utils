@@ -169,7 +169,6 @@ class Dataproc(object):
         while status != 'ERROR' and status != 'DONE':
             result = request.execute()
             status = result['status']['state']
-            progress = result['yarnApplications'][0]['progress']
 
             if status == 'ERROR':
                 raise Exception(result['status']['details'])
@@ -178,5 +177,7 @@ class Dataproc(object):
                 return result
 
             self.__logger.info("JOB %s  -  STATUS:%s", job_id, status)
-            self.__logger.info("Progress: %s%%", progress*100)
+            if 'yarnApplications' in result:
+                progress = result['yarnApplications'][0]['progress']
+                self.__logger.info("Progress: %s%%", progress*100)
             time.sleep(sleep_time)
