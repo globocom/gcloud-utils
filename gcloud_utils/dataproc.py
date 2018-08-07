@@ -126,7 +126,8 @@ class Dataproc(object):
         jar_files = [os.path.join(gs_root, x) for x in jar_paths]
 
         datetime_now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        job_id = "{}_{}".format(main_class, datetime_now)
+        main_class_formatted = main_class.replace('.', '_')
+        job_id = "{}_{}".format(main_class_formatted, datetime_now)
 
         job_details = {
             'projectId': self.__project,
