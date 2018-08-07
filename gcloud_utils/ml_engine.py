@@ -153,12 +153,15 @@ class MlEngine(object):
     def wait_job_to_finish(self, job_id, sleep_time=60):
         """Waits job to finish"""
 
-        state = ""
+        job = self.get_job(job_id)
+        state = job['state']
+        self.__logger.info("%s state: %s", job_id, state)
+
         while state not in ['SUCCEEDED', 'FAILED', 'CANCELLED']:
+            time.sleep(sleep_time)
             job = self.get_job(job_id)
             state = job['state']
             self.__logger.info("%s state: %s", job_id, state)
-            time.sleep(sleep_time)
 
         self.__logger.info("Job finished with status %s", state)
         return state
