@@ -92,3 +92,15 @@ class Storage(object):
     def upload_value(self, storage_path, value):
         """Upload a value to  Storage"""
         self.bucket.blob(storage_path).upload_from_string(value)
+
+    def delete_file(self, storage_path):
+        """Deletes a blob from the bucket."""
+        self.bucket.blob(storage_path).delete()
+
+    def delete_path(self, storage_path):
+        """Deletes all the blobs with storage_path prefix"""
+        blobs = self.bucket.list_blobs(prefix=storage_path)
+
+        for blob in blobs:
+            blob.delete()
+            self.logger.info("Blob %s deleted", blob.name)
