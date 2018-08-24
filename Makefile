@@ -31,9 +31,8 @@ test_coverage:
 	coverage report -m
 	coverage xml 
 
-update_sonar_coverage: test_coverage
-	git add coverage.xml
-
-push_sonar:
+sonar:
+	coverage run --source=./gcloud_utils/ -m unittest -v tests.test_compute tests.test_storage tests.test_ml_engine tests.test_dataproc
+	coverage report -m
+	coverage xml 
 	sonar-scanner
-
