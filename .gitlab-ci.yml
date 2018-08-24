@@ -10,5 +10,5 @@ test:
     - virtualenv .env
     - source .env/bin/activate
     - pip install -r requirements.txt --index-url=https://artifactory.globoi.com/artifactory/api/pypi/pypi-all/simple/
-    - pip install coverage
-    - make sonar
+    - pip install coverage --index-url=https://artifactory.globoi.com/artifactory/api/pypi/pypi-all/simple/
+    - make run_sonar
