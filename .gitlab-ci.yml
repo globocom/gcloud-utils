@@ -3,7 +3,6 @@ image: docker.artifactory.globoi.com/cluster/sonar-scanner:3.2.0-py
 stages:
   - test
 
-
 test:
   stage: test
   script:
@@ -11,5 +10,5 @@ test:
     - source .env/bin/activate
     - pip install -r requirements.txt --index-url=https://artifactory.globoi.com/artifactory/api/pypi/pypi-all/simple/
     - pip install coverage --index-url=https://artifactory.globoi.com/artifactory/api/pypi/pypi-all/simple/
-    - export GOOGLE_APPLICATION_CREDENTIALS=/data/tests/mock/mock_credentials.json
+    - export GOOGLE_APPLICATION_CREDENTIALS=./tests/mock/mock_credentials.json
     - make run_sonar
