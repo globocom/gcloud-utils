@@ -1,5 +1,4 @@
 """Test compute.py"""
-import json
 import unittest
 from freezegun import freeze_time
 from googleapiclient.http import HttpMock, HttpMockSequence
@@ -9,37 +8,6 @@ from mock import patch
 class TestMlEngine(unittest.TestCase):
     """Test Compute Class"""
     maxDiff = None
-
-    @freeze_time("1994-04-27 12:00:01")
-    def test_create_training_job(self):
-        """"Teste request to start a training job"""
-        http = HttpMock('tests/mock/ml_engine/first_result.json', {'status': '200'})
-        ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION",http=http)
-        post_to_create = ml_engine_test.start_training_job("PRODUTO", "PACOTE", "PACOTE.MODULO",
-        train_file="gs://rec-alg/recommendation/matrix_prefs/PRODUTO/train_one_file/part-00000",
-        test_file="gs://rec-alg/recommendation/matrix_prefs/PRODUTO/test_one_file/part-00000",
-        metadata_file="gs://rec-alg/recommendation/matrix_prefs/PRODUTO/metadata/part-00000")
-        # Test Method
-        self.assertEqual(post_to_create.method, "POST")
-        # Test API
-        self.assertEqual(post_to_create.uri, "https://ml.googleapis.com/v1/projects/PROJECT/jobs?alt=json")
-
-        # Test Body Post
-        expected = {"trainingInput": {
-                            "runtimeVersion": "1.0", 
-                            "region": "REGION", 
-                            "args": [
-                                    "--train-file", "gs://rec-alg/recommendation/matrix_prefs/PRODUTO/train_one_file/part-00000", 
-                                    "--test-file", "gs://rec-alg/recommendation/matrix_prefs/PRODUTO/test_one_file/part-00000", 
-                                    "--metadata-file", "gs://rec-alg/recommendation/matrix_prefs/PRODUTO/metadata/part-00000"
-                                    ], 
-                            "pythonModule": "PACOTE.MODULO", 
-                            "jobDir": "gs://BUCKET_NAME/jobs/PRODUTO_MODULO_1994_04_27_12_00_01", 
-                            "packageUris": ["gs://BUCKET_NAME/packages/PACOTE"]
-                            }, 
-                    "jobId": "PRODUTO_MODULO_1994_04_27_12_00_01"}
-
-        self.assertEqual(json.loads(post_to_create.body), expected)
 
     def test_create_new_model(self):
         """Test request to create a new model"""
