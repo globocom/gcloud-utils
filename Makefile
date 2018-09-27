@@ -1,4 +1,4 @@
-.PHONY: install clean test coverage sonar
+.PHONY: install clean test coverage lint sonar
 
 ROOT_PATH=$(shell pwd)
 
@@ -36,6 +36,9 @@ coverage:
 	@coverage run --source=./gcloud_utils/ -m pytest
 	@coverage report -m
 	@coverage xml 
+
+lint:
+	@pylint ./gcloud_utils/
 
 sonar: coverage 
 	sonar-scanner
