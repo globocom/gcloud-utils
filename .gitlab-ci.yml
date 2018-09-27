@@ -9,5 +9,5 @@ test:
     - virtualenv .env
     - source .env/bin/activate
     - make install
-    - export GOOGLE_APPLICATION_CREDENTIALS=./tests/mock/mock_credentials.json
+    - export GOOGLE_APPLICATION_CREDENTIALS=./tests/fixtures/mock_credentials.json
     - make sonar

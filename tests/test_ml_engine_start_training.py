@@ -12,7 +12,7 @@ class TestMlEngine(unittest.TestCase):
     maxDiff = None
 
     def setUp(self):
-        http = HttpMock('tests/mock/ml_engine/first_result.json', {'status': '200'})
+        http = HttpMock('tests/fixtures/ml_engine/first_result.json', {'status': '200'})
         self.ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION",http=http)
         self.main_body = {"trainingInput": {
                             "runtimeVersion": "1.0",

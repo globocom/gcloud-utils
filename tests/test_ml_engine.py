@@ -11,7 +11,7 @@ class TestMlEngine(unittest.TestCase):
 
     def test_create_new_model(self):
         """Test request to create a new model"""
-        http = HttpMock('tests/mock/ml_engine/first_result.json', {'status': '200'})
+        http = HttpMock('tests/fixtures/ml_engine/first_result.json', {'status': '200'})
         ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION",http=http)
         post_to_create_model = ml_engine_test.create_new_model("MODEL", "DESCRIPTION")
 
@@ -27,8 +27,8 @@ class TestMlEngine(unittest.TestCase):
     def test_create_new_model_version_4_5(self):
         """Test the creation of new model"""
         http = HttpMockSequence([
-            ({'status': '200'},open('tests/mock/ml_engine/first_result.json', 'rb').read()),
-            ({'status': '200'},open('tests/mock/ml_engine/versions_models.json', 'rb').read())
+            ({'status': '200'},open('tests/fixtures/ml_engine/first_result.json', 'rb').read()),
+            ({'status': '200'},open('tests/fixtures/ml_engine/versions_models.json', 'rb').read())
         
         ])
         ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION",http=http)
@@ -40,8 +40,8 @@ class TestMlEngine(unittest.TestCase):
     def test_create_new_model_version_5_0(self):
         """Test the creation of new model"""
         http = HttpMockSequence([
-            ({'status': '200'},open('tests/mock/ml_engine/first_result.json', 'rb').read()),
-            ({'status': '200'},open('tests/mock/ml_engine/versions_models_4_9.json', 'rb').read())
+            ({'status': '200'},open('tests/fixtures/ml_engine/first_result.json', 'rb').read()),
+            ({'status': '200'},open('tests/fixtures/ml_engine/versions_models_4_9.json', 'rb').read())
         
         ])
         ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION",http=http)
@@ -52,8 +52,8 @@ class TestMlEngine(unittest.TestCase):
     def test_create_new_model_version_empty(self):
         """Test the creation of new model"""
         http = HttpMockSequence([
-            ({'status': '200'},open('tests/mock/ml_engine/first_result.json', 'rb').read()),
-            ({'status': '200'},open('tests/mock/ml_engine/versions_models_empty.json', 'rb').read())
+            ({'status': '200'},open('tests/fixtures/ml_engine/first_result.json', 'rb').read()),
+            ({'status': '200'},open('tests/fixtures/ml_engine/versions_models_empty.json', 'rb').read())
         
         ])
         ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION",http=http)
@@ -65,8 +65,8 @@ class TestMlEngine(unittest.TestCase):
     def test_set_model_version_as_default(self):
         """"Test method that set version as default"""
         http = HttpMockSequence([
-            ({'status': '200'},open('tests/mock/ml_engine/first_result.json', 'rb').read()),
-            ({'status': '200'},open('tests/mock/ml_engine/versions_models_empty.json', 'rb').read())
+            ({'status': '200'},open('tests/fixtures/ml_engine/first_result.json', 'rb').read()),
+            ({'status': '200'},open('tests/fixtures/ml_engine/versions_models_empty.json', 'rb').read())
         ])
         ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION",http=http)
         result = ml_engine_test.set_version_as_default("model_teste","v1_0")
@@ -77,7 +77,7 @@ class TestMlEngine(unittest.TestCase):
     @freeze_time("1994-04-27 12:00:01")
     def test_start_prediciton_job(self):
         """"Teste request to start a training job"""
-        http = HttpMock('tests/mock/ml_engine/first_result.json', {'status': '200'})
+        http = HttpMock('tests/fixtures/ml_engine/first_result.json', {'status': '200'})
 
         input_file = "gs://BUCKET/recommendation/matrix_prefs/PRODUTO/input/part-00000"
         output_file="gs://BUCKET/recommendation/matrix_prefs/PRODUTO/output/part-00000"
@@ -100,7 +100,7 @@ class TestMlEngine(unittest.TestCase):
     @freeze_time("1994-04-27 12:00:01")
     def test_start_prediciton_job_exception_input_type_invalid(self):
         """"Teste create a prediciton job and input_file type isn't a list"""
-        http = HttpMock('tests/mock/ml_engine/first_result.json', {'status': '200'})
+        http = HttpMock('tests/fixtures/ml_engine/first_result.json', {'status': '200'})
 
         input_file = "gs://BUCKET/recommendation/matrix_prefs/PRODUTO/input/part-00000"
         output_file="gs://BUCKET/recommendation/matrix_prefs/PRODUTO/output/part-00000"
@@ -111,10 +111,10 @@ class TestMlEngine(unittest.TestCase):
 
     def test_job_list(self):
         """TEST JOB LIST AND FILTER BY FINAL STATE"""
-        jobs_mock = open('tests/mock/ml_engine/jobs.json', 'rb').read()
+        jobs_mock = open('tests/fixtures/ml_engine/jobs.json', 'rb').read()
 
         http = HttpMockSequence([
-            ({'status': '200'},open('tests/mock/ml_engine/first_result.json', 'rb').read()),
+            ({'status': '200'},open('tests/fixtures/ml_engine/first_result.json', 'rb').read()),
             ({'status': '200'},jobs_mock),
             ({'status': '200'},jobs_mock),
             ({'status': '200'},jobs_mock)
@@ -129,8 +129,8 @@ class TestMlEngine(unittest.TestCase):
         """Test getting a job"""
 
         http = HttpMockSequence([
-            ({'status': '200'},open('tests/mock/ml_engine/first_result.json', 'rb').read()),
-            ({'status': '200'},open('tests/mock/ml_engine/get_job_succeeded.json', 'rb').read()),
+            ({'status': '200'},open('tests/fixtures/ml_engine/first_result.json', 'rb').read()),
+            ({'status': '200'},open('tests/fixtures/ml_engine/get_job_succeeded.json', 'rb').read()),
         ])
 
         job_id = "globoplay_autoencoder_keras_2018_08_06_10_00_37"
@@ -143,9 +143,9 @@ class TestMlEngine(unittest.TestCase):
         """Test waiting job to finish execution"""
 
         http = HttpMockSequence([
-            ({'status': '200'},open('tests/mock/ml_engine/first_result.json', 'rb').read()),
-            ({'status': '200'},open('tests/mock/ml_engine/get_job_running.json', 'rb').read()),
-            ({'status': '200'},open('tests/mock/ml_engine/get_job_succeeded.json', 'rb').read())
+            ({'status': '200'},open('tests/fixtures/ml_engine/first_result.json', 'rb').read()),
+            ({'status': '200'},open('tests/fixtures/ml_engine/get_job_running.json', 'rb').read()),
+            ({'status': '200'},open('tests/fixtures/ml_engine/get_job_succeeded.json', 'rb').read())
         ])
 
         job_id = "globoplay_autoencoder_keras_2018_08_06_10_00_37"
