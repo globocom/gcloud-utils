@@ -1,0 +1,85 @@
+#!/usr/bin/env python
+
+import os
+import time
+import argparse
+from google.cloud import bigquery
+from datetime import date, datetime, timedelta
+from gcloud_utils.bigquery.bigquery import Bigquery
+
+DEFAULT_DATE_FORMAT='%Y%m%d'
+
+os.environ['TZ'] = 'America/Sao_Paulo'
+time.tzset()
+
+def main():
+    parser = argparse.ArgumentParser(description='Process Bigquery table to Google Cloud Storage')
+
+    parser.add_argument(
+        'bigquery_dataset',
+        help='Name of BigQuery dataset.'
+    )
+
+    parser.add_argument(
+        'bigquery_tablename',
+        help='Name of BigQuery table.'
+    )
+
+    parser.add_argument(
+        'cloudstorage_bucket',
+        help='Name of CloudStorage bucket.'
+    )
+
+    parser.add_argument(
+        'cloudstorage_filename',
+        help='Name file to store in CloudStorage.'
+    )
+
+    parser.add_argument(
+        'gcs_key_json',
+        help='Name of Json key.'
+    )
+
+    parser.add_argument(
+        'start_date',
+        help='Script start date.',
+        default=date.today().strftime(DEFAULT_DATE_FORMAT)
+    )
+
+    parser.add_argument(
+        'time_delta',
+        help='How many days ago you want to get the table.'
+    )
+
+    parser.add_argument(
+        'export_format',
+        help='Export Format.',
+        default="csv"
+    )
+
+    parser.add_argument(
+        'compression_format',
+        help='Compression Format.',
+        default="gzip"
+    )
+
+    args = parser.parse_args()
+
+    os.environ['TZ'] = 'America/Sao_Paulo'
+    time.tzset()
+
+    client = bigquery.Client.from_service_account_json('./{}'.format(args.gcs_key_json))
+
+    dt = datetime.strptime(args.start_date, DEFAULT_DATE_FORMAT) - timedelta(int(args.time_delta))
+
+    bq_table_name = args.bigquery_tablename % dict(date=dt.strftime(DEFAULT_DATE_FORMAT))
+
+    bq_client = Bigquery(client)
+
+    bq_client.table_to_cloud_storage(
+        args.bigquery_dataset, bq_table_name, args.cloudstorage_bucket, args.cloudstorage_filename,
+        export_format=args.export_format,
+        compression_format=args.compression_format
+    )
+
+main()

@@ -1,0 +1,81 @@
+#!/usr/bin/env python
+
+import os
+import time
+import argparse
+from google.cloud import bigquery
+from gcloud_utils.bigquery.bigquery import Bigquery, QueryBuilder
+from datetime import date, timedelta
+
+DEFAULT_DATE_FORMAT='%Y%m%d'
+
+os.environ['TZ'] = 'America/Sao_Paulo'
+time.tzset()
+
+def ensure_value(namespace, dest, default):
+    stored = getattr(namespace, dest, None)
+    if stored is None:
+        return value
+    return stored
+
+
+class store_dict(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        vals = dict(ensure_value(namespace, self.dest, {}))
+        k, _, v = values.partition('=')
+        vals[k] = v
+        setattr(namespace, self.dest, vals)
+
+def main():
+    parser = argparse.ArgumentParser(description='Process query to table in Bigquery')
+
+    parser.add_argument(
+        'bigquery_dataset',
+        help='Name of BigQuery dataset.'
+    )
+
+    parser.add_argument(
+        'bigquery_tablename',
+        help='Name of BigQuery table.'
+    )
+
+    parser.add_argument(
+        'gcs_key_json',
+        help='Name of Json key.'
+    )
+    
+    parser.add_argument(
+        'start_date',
+        help='Script start date.',
+        default=date.today().strftime(DEFAULT_DATE_FORMAT)
+    )
+
+    parser.add_argument(
+        'query_file',
+        help='File with sql query to run.'
+    )
+
+    parser.add_argument(
+        '-A', default={}, action=store_dict,
+        help='Query arguments.'
+    )
+
+    args = parser.parse_args()
+
+    client = bigquery.Client.from_service_account_json('./{}'.format(args.gcs_key_json))
+
+    query_args = args.D
+
+    start_date = datetime.strptime(args.start_date, DEFAULT_DATE_FORMAT)
+    one_day = timedelta(1)
+    query_args["previews_date"] = query_args.get("previews_date", (start_date - one_day).strftime(DEFAULT_DATE_FORMAT))
+    query_args["start_date"] = query_args.get("start_date", start_date.strftime(DEFAULT_DATE_FORMAT))
+    query_args["next_date"] = query_args.get("next_date", (start_date + one_day).strftime(DEFAULT_DATE_FORMAT))
+
+    bq_client = Bigquery(client)
+    query = QueryBuilder(args.query_file)
+    query.with_vars(**query_args)
+
+    bq_client.query_to_table(query, args.bigquery_dataset, args.bigquery_tablename)
+
+main()

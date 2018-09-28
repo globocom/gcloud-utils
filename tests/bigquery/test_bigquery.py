@@ -22,7 +22,7 @@ class TestBigquery(unittest.TestCase):
     def test_make_query_with_object(self):
         query = QueryBuilder("select * from test")
         job_mock = mock.Mock()
-        client_mock = mock.Mock(**{'query.return_value': job_mock})
+        client_mock = mock.Mock(**{"query.return_value": job_mock})
 
         bigquery = Bigquery(client_mock)
         bigquery.query(query)
@@ -30,4 +30,155 @@ class TestBigquery(unittest.TestCase):
         job_mock.result.assert_called_once()
     
     def test_make_query_to_table(self):
-        pass
+        query = "select * from test"
+        client_mock = mock.Mock()
+        dataset_id = "test_dataset"
+        table_id = "test_table"
+
+        bigquery = Bigquery(client_mock)
+        bigquery.query_to_table(query, dataset_id, table_id)
+        client_mock.query.assert_called_once()
+
+    def test_make_query_to_table_with_job_config(self):
+        dataset_id = "test_dataset"
+        table_id = "test_table"
+        query = "select * from test"
+        job_config_mock = mock.Mock()
+        dataset_mock = mock.Mock(**{"table.return_value": table_id + "_name"})
+        client_mock = mock.Mock(**{"dataset.return_value": dataset_mock})
+
+        bigquery = Bigquery(client_mock)
+        bigquery.query_to_table(query, dataset_id, table_id, job_config=job_config_mock)
+        client_mock.query.assert_called_once_with(query=query, job_config=job_config_mock)
+        self.assertEqual(table_id + "_name", job_config_mock.destination)
+        self.assertEqual("WRITE_TRUNCATE", job_config_mock.write_disposition)
+
+    def test_make_query_to_table_with_write_disposition(self):
+        dataset_id = "test_dataset"
+        table_id = "test_table"
+        query = "select * from test"
+        write_disposition = "test"
+        job_config_mock = mock.Mock()
+        client_mock = mock.Mock()
+
+        bigquery = Bigquery(client_mock)
+        bigquery.query_to_table(query, dataset_id, table_id, job_config=job_config_mock, write_disposition=write_disposition)
+        client_mock.query.assert_called_once_with(query=query, job_config=job_config_mock)
+
+        self.assertEqual(write_disposition, job_config_mock.write_disposition)
+    
+    def test_export_table_to_google_cloud(self):
+        dataset_id = "test_dataset"
+        table_id = "test_table"
+        bucket_name = "test_bucket"
+        bucket_filename = "test_filename"
+        
+        client_mock = mock.Mock()
+        bigquery = Bigquery(client_mock)
+        bigquery.table_to_cloud_storage(dataset_id, table_id, bucket_name, bucket_filename)
+
+        client_mock.extract_table.assert_called_once()
+    
+    def test_export_table_to_google_cloud_with_wrong_file_type(self):
+        dataset_id = "test_dataset"
+        table_id = "test_table"
+        bucket_name = "test_bucket"
+        bucket_filename = "test_filename"
+        
+        client_mock = mock.Mock()
+        bigquery = Bigquery(client_mock)
+
+        with self.assertRaises(Exception) as context:
+            bigquery.table_to_cloud_storage(dataset_id, table_id, bucket_name, bucket_filename, export_format="no_exists")
+
+        client_mock.extract_table.assert_not_called()
+
+    def test_export_table_to_google_cloud_with_wrong_compression_type(self):
+        dataset_id = "test_dataset"
+        table_id = "test_table"
+        bucket_name = "test_bucket"
+        bucket_filename = "test_filename"
+        
+        client_mock = mock.Mock()
+        bigquery = Bigquery(client_mock)
+
+        with self.assertRaises(Exception) as context:
+            bigquery.table_to_cloud_storage(dataset_id, table_id, bucket_name, bucket_filename, compression_format="no_exists")
+
+        client_mock.extract_table.assert_not_called()
+
+    def test_export_table_to_google_cloud_with_wrong_compression_type_and_file_type(self):
+        dataset_id = "test_dataset"
+        table_id = "test_table"
+        bucket_name = "test_bucket"
+        bucket_filename = "test_filename"
+        
+        client_mock = mock.Mock()
+        bigquery = Bigquery(client_mock)
+
+        with self.assertRaises(Exception) as context:
+            bigquery.table_to_cloud_storage(dataset_id, table_id, bucket_name, bucket_filename, compression_format="no_exists", export_format="no_exists")
+
+        client_mock.extract_table.assert_not_called()
+
+    def test_export_table_to_google_cloud_with_job_config(self):
+        dataset_id = "test_dataset"
+        table_id = "test_table"
+        bucket_name = "test_bucket"
+        bucket_filename = "test_filename"
+        location = "test_US"
+        expected_destination = "gs://test_bucket/test_filename_*.csv.gzip"
+        export_format = "csv"
+        compression_format = "gzip"
+
+        job_config_mock = mock.Mock()
+        dataset_mock = mock.Mock(**{"table.return_value": table_id + "_name"})
+        client_mock = mock.Mock(**{"dataset.return_value": dataset_mock})
+
+        bigquery = Bigquery(client_mock)
+        bigquery.table_to_cloud_storage(
+            dataset_id, table_id, bucket_name, bucket_filename,
+            export_format=export_format, compression_format=compression_format,
+            job_config=job_config_mock, location=location
+        )
+
+        client_mock.extract_table.assert_called_once_with(
+            table_id + "_name",
+            expected_destination,
+            location=location,
+            job_config=job_config_mock
+        )
+        self.assertEqual(bigquery.COMPRESSION_FORMATS[compression_format], job_config_mock.compression)
+        self.assertEqual(bigquery.FILE_FORMATS[export_format], job_config_mock.destination_format)
+
+    def test_export_table_to_google_cloud_with_job_config_and_extra_params(self):
+        dataset_id = "test_dataset"
+        table_id = "test_table"
+        bucket_name = "test_bucket"
+        bucket_filename = "test_filename"
+        location = "test_US"
+        expected_destination = "gs://test_bucket/test_filename_*.json"
+        export_format = "json"
+        compression_format = None
+        xuxu = "test_xuxu"
+
+        job_config_mock = mock.Mock()
+        dataset_mock = mock.Mock(**{"table.return_value": table_id + "_name"})
+        client_mock = mock.Mock(**{"dataset.return_value": dataset_mock})
+
+        bigquery = Bigquery(client_mock)
+        bigquery.table_to_cloud_storage(
+            dataset_id, table_id, bucket_name, bucket_filename,
+            export_format=export_format, compression_format=compression_format,
+            job_config=job_config_mock, location=location, xuxuxu=xuxu
+        )
+
+        client_mock.extract_table.assert_called_once_with(
+            table_id + "_name",
+            expected_destination,
+            location=location,
+            job_config=job_config_mock,
+            xuxuxu=xuxu
+        )
+        self.assertEqual(bigquery.COMPRESSION_FORMATS[compression_format], job_config_mock.compression)
+        self.assertEqual(bigquery.FILE_FORMATS[export_format], job_config_mock.destination_format)
