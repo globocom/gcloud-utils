@@ -62,9 +62,9 @@ def main():
 
     args = parser.parse_args()
 
-    client = bigquery.Client.from_service_account_json('./{}'.format(args.gcs_key_json))
+    client = bigquery.Client.from_service_account_json(args.gcs_key_json)
 
-    query_args = args.D
+    query_args = args.A
 
     start_date = datetime.strptime(args.start_date, DEFAULT_DATE_FORMAT)
     one_day = timedelta(1)

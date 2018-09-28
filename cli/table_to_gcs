@@ -54,13 +54,16 @@ def main():
     parser.add_argument(
         'export_format',
         help='Export Format.',
-        default="csv"
+        default="csv",
+        choices=['csv', 'json', 'avro']
+
     )
 
     parser.add_argument(
         'compression_format',
         help='Compression Format.',
-        default="gzip"
+        default="gzip",
+        choices=['gzip', 'none', 'snappy']
     )
 
     args = parser.parse_args()
@@ -68,7 +71,7 @@ def main():
     os.environ['TZ'] = 'America/Sao_Paulo'
     time.tzset()
 
-    client = bigquery.Client.from_service_account_json('./{}'.format(args.gcs_key_json))
+    client = bigquery.Client.from_service_account_json(args.gcs_key_json)
 
     dt = datetime.strptime(args.start_date, DEFAULT_DATE_FORMAT) - timedelta(int(args.time_delta))
 
@@ -76,10 +79,12 @@ def main():
 
     bq_client = Bigquery(client)
 
+    compression_format = None if args.compression_format=="none" else args.compression_format
+
     bq_client.table_to_cloud_storage(
         args.bigquery_dataset, bq_table_name, args.cloudstorage_bucket, args.cloudstorage_filename,
         export_format=args.export_format,
-        compression_format=args.compression_format
+        compression_format=
     )
 
 main()
