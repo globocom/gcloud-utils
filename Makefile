@@ -16,7 +16,7 @@ clean:
 release: clean
 ifndef VERSION
 	@echo "USAGE:\n make VERSION=XXX release"
-	$@(error you must pass a VERSION)
+	$(error you must pass a VERSION)
 endif
 	@echo $(VERSION) > version
 	@git add version
@@ -24,7 +24,7 @@ endif
 	@git commit -m "Bump $(VERSION)"
 	@git push --tags
 	@git push origin HEAD
-	@@echo "Push to artifactory"
+	@echo "Push to artifactory"
 	@python setup.py sdist upload -r pypi-local 
 	@python setup.py sdist upload -r ipypi-local
 
