@@ -1,1 +1,4 @@
 include version
+include requirements.txt
+include README.md
+recursive-include cli/*

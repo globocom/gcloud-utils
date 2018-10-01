@@ -9,8 +9,8 @@ class TestDataproc(unittest.TestCase):
 
     def test_list_cluster_1(self):
         http_mocked = HttpMockSequence([
-            ({'status': '200'},open('tests/mock/dataproc/first_request.json', 'rb').read()),
-            ({'status': '200'},open('tests/mock/dataproc/list_clusters.json', 'rb').read())
+            ({'status': '200'},open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
+            ({'status': '200'},open('tests/fixtures/dataproc/list_clusters.json', 'rb').read())
         ])
         dataproc_test = dataproc.Dataproc(project="",region="",http=http_mocked)
         result = dataproc_test.list_clusters()
@@ -18,8 +18,8 @@ class TestDataproc(unittest.TestCase):
 
     def test_list_cluster_0(self):
         http_mocked = HttpMockSequence([
-            ({'status': '200'},open('tests/mock/dataproc/first_request.json', 'rb').read()),
-            ({'status': '200'},open('tests/mock/dataproc/list_clusters_0.json', 'rb').read())
+            ({'status': '200'},open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
+            ({'status': '200'},open('tests/fixtures/dataproc/list_clusters_0.json', 'rb').read())
         ])
         dataproc_test = dataproc.Dataproc(project="",region="",http=http_mocked)
         result = dataproc_test.list_clusters()
@@ -27,9 +27,9 @@ class TestDataproc(unittest.TestCase):
 
     def test_list_with_iterate_pages(self):
         http_mocked = HttpMockSequence([
-            ({'status': '200'},open('tests/mock/dataproc/first_request.json', 'rb').read()),
-            ({'status': '200'},open('tests/mock/dataproc/list_clusters_page_1.json', 'rb').read()),
-            ({'status': '200'},open('tests/mock/dataproc/list_clusters_page_2.json', 'rb').read())
+            ({'status': '200'},open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
+            ({'status': '200'},open('tests/fixtures/dataproc/list_clusters_page_1.json', 'rb').read()),
+            ({'status': '200'},open('tests/fixtures/dataproc/list_clusters_page_2.json', 'rb').read())
         ])
         dataproc_test = dataproc.Dataproc(project="",region="",http=http_mocked)
         result = dataproc_test.list_clusters()
@@ -37,11 +37,11 @@ class TestDataproc(unittest.TestCase):
 
     def test_create_cluster(self):
         http_mocked = HttpMockSequence([
-            ({'status': '200'}, open('tests/mock/dataproc/first_request.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
             ({'status': '200'}, 'echo_request_body'),
-            ({'status': '200'}, open('tests/mock/dataproc/cluster_not_done.json', 'rb').read()),
-            ({'status': '200'}, open('tests/mock/dataproc/cluster_not_done.json', 'rb').read()),
-            ({'status': '200'}, open('tests/mock/dataproc/cluster_done.json', 'rb').read())
+            ({'status': '200'}, open('tests/fixtures/dataproc/cluster_not_done.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/cluster_not_done.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/cluster_done.json', 'rb').read())
         ])
         dataproc_test = dataproc.Dataproc(project="project", region="region", http=http_mocked)
         result = dataproc_test.create_cluster("NAME", 2, ["B1", "B2"])
@@ -78,9 +78,9 @@ class TestDataproc(unittest.TestCase):
 
     def test_delete_cluster(self):
         http_mocked = HttpMockSequence([
-            ({'status': '200'}, open('tests/mock/dataproc/first_request.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
             ({'status': '200'}, 'echo_request_headers_as_json'),
-            ({'status': '200'}, open('tests/mock/dataproc/cluster_deleting.json', 'rb').read())
+            ({'status': '200'}, open('tests/fixtures/dataproc/cluster_deleting.json', 'rb').read())
         ])
         dataproc_test = dataproc.Dataproc(project="project", region="region", http=http_mocked)
         result = dataproc_test.delete_cluster("NAME")
@@ -89,11 +89,11 @@ class TestDataproc(unittest.TestCase):
     @freeze_time("1994-04-27 12:00:01")
     def test_submit_job_success(self):
         http_mocked = HttpMockSequence([
-            ({'status': '200'}, open('tests/mock/dataproc/first_request.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
             ({'status': '200'}, 'echo_request_body'),
-            ({'status': '200'}, open('tests/mock/dataproc/job_status_running.json', 'rb').read()),
-            ({'status': '200'}, open('tests/mock/dataproc/job_status_running.json', 'rb').read()),
-            ({'status': '200'}, open('tests/mock/dataproc/job_status_done.json', 'rb').read())
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_running.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_running.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_done.json', 'rb').read())
         ])
 
         dataproc_test = dataproc.Dataproc(project="project", region="region", http=http_mocked)
@@ -122,11 +122,11 @@ class TestDataproc(unittest.TestCase):
     @freeze_time("1994-04-27 12:00:01")
     def test_submit_job_error(self):
         http_mocked = HttpMockSequence([
-            ({'status': '200'}, open('tests/mock/dataproc/first_request.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
             ({'status': '200'}, 'echo_request_body'),
-            ({'status': '200'}, open('tests/mock/dataproc/job_status_running.json', 'rb').read()),
-            ({'status': '200'}, open('tests/mock/dataproc/job_status_error.json', 'rb').read()),
-            ({'status': '200'}, open('tests/mock/dataproc/job_status_done.json', 'rb').read())
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_running.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_error.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_done.json', 'rb').read())
         ])
 
         dataproc_test = dataproc.Dataproc(project="project", region="region", http=http_mocked)

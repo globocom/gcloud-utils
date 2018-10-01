@@ -1,4 +1,10 @@
+.PHONY: install clean test coverage lint sonar
+
 ROOT_PATH=$(shell pwd)
+
+install:
+	@pip install -r requirements.txt --index-url=https://artifactory.globoi.com/artifactory/api/pypi/pypi-all/simple/
+	@pip install -r requirements_test.txt --index-url=https://artifactory.globoi.com/artifactory/api/pypi/pypi-all/simple/
 
 clean:
 	-@rm -rf $(ROOT_PATH)/*.egg-info
@@ -13,26 +19,26 @@ ifndef VERSION
 	$(error you must pass a VERSION)
 endif
 	@echo $(VERSION) > version
-	git add version
-	git tag $(VERSION)
-	git commit -m "Bump $(VERSION)"
-	git push --tags
-	git push origin HEAD
+	@git add version
+	@git tag $(VERSION)
+	@git commit -m "Bump $(VERSION)"
+	@git push --tags
+	@git push origin HEAD
 	@echo "Push to artifactory"
-	python setup.py sdist upload -r pypi-local 
-	python setup.py sdist upload -r ipypi-local
+	@python setup.py sdist upload -r pypi-local 
+	@python setup.py sdist upload -r ipypi-local
 
 
 test:
-	python -m unittest -v tests.test_compute tests.test_storage tests.test_ml_engine tests.test_dataproc
+	@pytest
 
-test_coverage:
-	coverage run --source=./gcloud_utils/ -m unittest -v tests.test_compute tests.test_storage tests.test_ml_engine tests.test_dataproc
-	coverage report -m
-	coverage xml 
+coverage:
+	@coverage run --source=./gcloud_utils/ -m pytest
+	@coverage report -m
+	@coverage xml 
 
-run_sonar:
-	coverage run --source=./gcloud_utils/ -m unittest -v tests.test_compute tests.test_storage tests.test_ml_engine tests.test_dataproc tests.test_ml_engine_start_training
-	coverage report -m
-	coverage xml 
+lint:
+	@pylint ./gcloud_utils/
+
+sonar: coverage 
 	sonar-scanner
