@@ -84,7 +84,8 @@ def main():
     bq_client.table_to_cloud_storage(
         args.bigquery_dataset, bq_table_name, args.cloudstorage_bucket, args.cloudstorage_filename,
         export_format=args.export_format,
-        compression_format=
+        compression_format=compression_format
     )
 
-main()
+if __name__ == "__main__":
+    main()

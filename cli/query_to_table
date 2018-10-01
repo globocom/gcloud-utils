@@ -78,4 +78,5 @@ def main():
 
     bq_client.query_to_table(query, args.bigquery_dataset, args.bigquery_tablename)
 
-main()
+if __name__ == "__main__":
+    main()
