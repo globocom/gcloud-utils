@@ -5,7 +5,7 @@ import time
 import argparse
 from google.cloud import bigquery
 from gcloud_utils.bigquery.bigquery import Bigquery, QueryBuilder
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 DEFAULT_DATE_FORMAT='%Y%m%d'
 
