@@ -1,7 +1,6 @@
 """Test QueryBuilder Module"""
 import unittest
 import os
-from googleapiclient.http import HttpMockSequence
 from gcloud_utils.bigquery.query_builder import QueryBuilder
 
 class TestQueryBuilder(unittest.TestCase):

@@ -1,9 +1,10 @@
 """Test Bigquery Module"""
 import unittest
 import os
-from googleapiclient.http import HttpMockSequence
 from gcloud_utils.bigquery.bigquery import Bigquery
 from gcloud_utils.bigquery.query_builder import QueryBuilder
+from google.cloud import bigquery
+
 try:
     import mock
 except ImportError:
@@ -11,6 +12,9 @@ except ImportError:
 
 class TestBigquery(unittest.TestCase):
     "Test Bigquery module"
+
+    def test_is_using_base_contract(self):
+        self.assertEqual(bigquery, Bigquery.MODEL_CLIENT)
 
     def test_make_query(self):
         query = "select * from test"

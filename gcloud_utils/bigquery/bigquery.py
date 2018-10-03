@@ -1,7 +1,8 @@
 from google.cloud import bigquery
 from gcloud_utils.bigquery.query_builder import QueryBuilder
+from gcloud_utils.base_client import BaseClient
 
-class Bigquery(object):
+class Bigquery(BaseClient):
     """Google-Bigquery handler"""
 
     FILE_FORMATS = {
@@ -16,8 +17,10 @@ class Bigquery(object):
         "snappy": "SNAPPY"
     }
 
+    MODEL_CLIENT = bigquery
+
     def __init__(self, client):
-        self._client = client
+        super(Bigquery, self).__init__(client)
         self._query = None
 
     def query(self, query_or_object, **kwargs):
