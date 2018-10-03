@@ -3,9 +3,10 @@
 import os
 import time
 import argparse
-from google.cloud import bigquery
+from google.cloud import bigquery, storage
 from datetime import date, datetime, timedelta
 from gcloud_utils.bigquery.bigquery import Bigquery
+from gcloud_utils.storage import Storage
 
 DEFAULT_DATE_FORMAT='%Y%m%d'
 
@@ -71,15 +72,19 @@ def main():
     os.environ['TZ'] = 'America/Sao_Paulo'
     time.tzset()
 
-    client = bigquery.Client.from_service_account_json(args.gcs_key_json)
-
     dt = datetime.strptime(args.start_date, DEFAULT_DATE_FORMAT) - timedelta(int(args.time_delta))
 
-    bq_table_name = args.bigquery_tablename % dict(date=dt.strftime(DEFAULT_DATE_FORMAT))
+    start_date_string = dt.strftime(DEFAULT_DATE_FORMAT)
 
-    bq_client = Bigquery(client)
+    bq_table_name = args.bigquery_tablename % dict(date=start_date_string)
+
+    bq_client = Bigquery(bigquery.Client.from_service_account_json(args.gcs_key_json))
 
     compression_format = None if args.compression_format=="none" else args.compression_format
+
+    storage_client = Storage(args.cloudstorage_bucket, storage.Client.from_service_account_json(args.gcs_key_json))
+
+    storage_client.rename_files(args.cloudstorage_filename, "tmp_{}/{}".format(start_date_string, args.cloudstorage_filename))
 
     bq_client.table_to_cloud_storage(
         args.bigquery_dataset, bq_table_name, args.cloudstorage_bucket, args.cloudstorage_filename,

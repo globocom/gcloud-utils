@@ -19,7 +19,7 @@ class Bigquery(BaseClient):
 
     MODEL_CLIENT = bigquery
 
-    def __init__(self, client):
+    def __init__(self, client=None):
         super(Bigquery, self).__init__(client)
         self._query = None
 

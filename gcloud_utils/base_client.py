@@ -1,10 +1,15 @@
 import os
+import logging
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
 class BaseClient(object):
     CREDENTIAL_ENV = "GOOGLE_APPLICATION_CREDENTIALS"
     MODEL_CLIENT = None
 
     def __init__(self, client=None):
+        self.logger = logging.getLogger(name=self.__class__.__name__)
         if client:
             self._client = client
         elif os.environ.get(self.CREDENTIAL_ENV):
