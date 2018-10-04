@@ -63,8 +63,8 @@ def main():
     parser.add_argument(
         'compression_format',
         help='Compression Format.',
-        default="gzip",
-        choices=['gzip', 'none', 'snappy']
+        default="gz",
+        choices=['gz', 'none', 'snappy']
     )
 
     args = parser.parse_args()
