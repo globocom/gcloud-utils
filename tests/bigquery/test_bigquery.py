@@ -131,9 +131,9 @@ class TestBigquery(unittest.TestCase):
         bucket_name = "test_bucket"
         bucket_filename = "test_filename"
         location = "test_US"
-        expected_destination = "gs://test_bucket/test_filename_*.csv.gzip"
+        expected_destination = "gs://test_bucket/test_filename_*.csv.gz"
         export_format = "csv"
-        compression_format = "gzip"
+        compression_format = "gz"
 
         job_config_mock = mock.Mock()
         dataset_mock = mock.Mock(**{"table.return_value": table_id + "_name"})

@@ -13,7 +13,7 @@ class Bigquery(BaseClient):
 
     COMPRESSION_FORMATS = {
         None: "NONE",
-        "gzip": "GZIP",
+        "gz": "GZIP",
         "snappy": "SNAPPY"
     }
 
@@ -52,7 +52,7 @@ class Bigquery(BaseClient):
                 ",".join(self.FILE_FORMATS.keys()), ",".join(self.COMPRESSION_FORMATS.keys())
             ))
 
-    def table_to_cloud_storage(self, dataset_id, table_id, bucket_name, filename, job_config=None, export_format="csv", compression_format="gzip", location="US", **kwargs):
+    def table_to_cloud_storage(self, dataset_id, table_id, bucket_name, filename, job_config=None, export_format="csv", compression_format="gz", location="US", **kwargs):
 
         complete_filename = self._complete_filename(filename, export_format, compression_format)
 
