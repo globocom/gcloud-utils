@@ -89,5 +89,5 @@ bq_client.query_to_table(query_or_object, dataset_id, table_id, write_dispositio
 from google.cloud import bigquery
 client = bigquery.Client.from_service_account_json(args.gcs_key_json)
 bq_client = Bigquery(client)
-bq_client.table_to_cloud_storage(dataset_id, table_id, bucket_name, filename, job_config=None, export_format="csv", compression_format="gzip", location="US", **kwargs)
+bq_client.table_to_cloud_storage(dataset_id, table_id, bucket_name, filename, job_config=None, export_format="csv", compression_format="gz", location="US", **kwargs)
 ```
