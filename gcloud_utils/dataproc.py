@@ -62,7 +62,10 @@ class Dataproc(object):
             time.sleep(sleep_time)
         return not midle_state
 
-    def create_cluster(self, name, workers, workers_names):
+    def create_cluster(self, name, workers, workers_names=None):
+        if workers_names is None:
+            workers_names = ["worker" + str(i) for i in range(1, workers+1)]
+
         "Create a cluster"
         data_to_create = {
             "projectId":self.__project,
