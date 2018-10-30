@@ -71,6 +71,10 @@ def main():
 
     dt = datetime.strptime(args.start_date, DEFAULT_DATE_FORMAT) - timedelta(int(args.time_delta))
 
+    seven_days_before = datetime.strptime(args.start_date, DEFAULT_DATE_FORMAT) - timedelta(7)
+
+    seven_days_before_string = seven_days_before.strftime(DEFAULT_DATE_FORMAT)
+
     start_date_string = dt.strftime(DEFAULT_DATE_FORMAT)
 
     bq_table_name = args.bigquery_tablename % dict(date=start_date_string)
@@ -82,12 +86,18 @@ def main():
     storage_client = Storage(args.cloudstorage_bucket, storage.Client.from_service_account_json(args.gcs_key_json))
 
     storage_client.rename_files(args.cloudstorage_filename, "tmp_{}/{}".format(start_date_string, args.cloudstorage_filename))
+    
 
     bq_client.table_to_cloud_storage(
         args.bigquery_dataset, bq_table_name, args.cloudstorage_bucket, args.cloudstorage_filename,
         export_format=args.export_format,
         compression_format=compression_format
     )
+
+    try:
+        storage_client.delete_path("tmp_{}/{}".format(seven_days_before_string, args.cloudstorage_filename))
+    except:
+        pass
 
 if __name__ == "__main__":
     main()
