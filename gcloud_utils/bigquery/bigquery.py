@@ -88,11 +88,6 @@ class Bigquery(BaseClient):
 
     def cloud_storage_to_table(self, bucket_name, filename, dataset_id, table_id, job_config=None, location="US", **kwargs):
 
-        try:
-            self.create_table(dataset_id, table_id)
-        except:
-            pass
-
         dataset_ref = self._client.dataset(dataset_id)
         table_ref = dataset_ref.table(table_id)
 
