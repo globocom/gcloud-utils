@@ -197,13 +197,14 @@ class TestBigquery(unittest.TestCase):
         
         dataset_mock = mock.Mock(**{"table.return_value": mock.Mock(bigquery.Table)})
         client_mock = mock.Mock(**{"dataset.return_value": mock.Mock(bigquery.Dataset)})
+        job_config_mock = mock.Mock()
 
         bq = Bigquery(client_mock)
-        bq.cloud_storage_to_table(bucket_name, bucket_filename, dataset_id, table_id)
+        bq.cloud_storage_to_table(bucket_name, bucket_filename, dataset_id, table_id, job_config_mock)
 
         client_mock.load_table_from_uri.assert_called_once_with(
             expected_source,
             client_mock.dataset().table(),
-            job_config=None,
+            job_config=job_config_mock,
             location='US'
         )

@@ -46,6 +46,13 @@ def main():
         default=date.today().strftime(DEFAULT_DATE_FORMAT)
     )
 
+    parser.add_argument(
+        'import_format',
+        help='Export Format.',
+        default="csv",
+        choices=['csv', 'json', 'avro', 'parquet', 'orc']
+
+    )
     args = parser.parse_args()
 
     dt = datetime.strptime(args.start_date, DEFAULT_DATE_FORMAT)
@@ -56,8 +63,12 @@ def main():
 
     bq_client = Bigquery(bigquery.Client.from_service_account_json(args.gcs_key_json))
 
+    job_config = bigquery.LoadJobConfig()
+    job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
+    job_config.autodetect = True
+    
     bq_client.cloud_storage_to_table(
-        args.cloudstorage_bucket, args.cloudstorage_filename, args.bigquery_dataset, bq_table_name
+        args.cloudstorage_bucket, args.cloudstorage_filename, args.bigquery_dataset, bq_table_name, job_config, args.import_format
     )
 
 if __name__ == "__main__":

@@ -60,13 +60,6 @@ def main():
 
     )
 
-    parser.add_argument(
-        'compression_format',
-        help='Compression Format.',
-        default="gz",
-        choices=['gz', 'none', 'snappy']
-    )
-
     args = parser.parse_args()
 
     dt = datetime.strptime(args.start_date, DEFAULT_DATE_FORMAT) - timedelta(int(args.time_delta))

@@ -8,7 +8,9 @@ class Bigquery(BaseClient):
     FILE_FORMATS = {
         "csv": "CSV",
         "json": "NEWLINE_DELIMITED_JSON",
-        "avro": "AVRO"
+        "avro": "AVRO",
+        "parquet": "PARQUET",
+        "orc": "ORC"
     }
 
     COMPRESSION_FORMATS = {
@@ -86,10 +88,18 @@ class Bigquery(BaseClient):
         table = bigquery.Table(table_ref)
         return self._client.create_table(table)
 
-    def cloud_storage_to_table(self, bucket_name, filename, dataset_id, table_id, job_config=None, location="US", **kwargs):
+    def cloud_storage_to_table(self, bucket_name, filename, dataset_id, table_id, job_config=None, import_format="csv", location="US", **kwargs):
+
+        try:
+            self.create_table(dataset_id, table_id)
+        except:
+            pass
 
         dataset_ref = self._client.dataset(dataset_id)
         table_ref = dataset_ref.table(table_id)
+
+        job_config = job_config if job_config else bigquery.LoadJobConfig()
+        job_config.source_format = self.FILE_FORMATS.get(import_format)
 
         return self._client.load_table_from_uri(
             "gs://{}/{}".format(bucket_name, filename),
