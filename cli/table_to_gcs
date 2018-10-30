@@ -69,9 +69,6 @@ def main():
 
     args = parser.parse_args()
 
-    os.environ['TZ'] = 'America/Sao_Paulo'
-    time.tzset()
-
     dt = datetime.strptime(args.start_date, DEFAULT_DATE_FORMAT) - timedelta(int(args.time_delta))
 
     start_date_string = dt.strftime(DEFAULT_DATE_FORMAT)

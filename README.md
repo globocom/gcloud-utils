@@ -39,6 +39,18 @@ onde:
 
 Para mais parâmetros use o -h
 
+#### Cloud Storage importando Tabela no BigQuery
+
+```
+gcs_to_table bucket cloudstorage_filename dataset table json_key YYYYMMDD
+```
+
+onde:
+- YYYMMMDD é a data que está rodando o script
+- json_key é a chave de acesso ao bigquery
+
+Para mais parâmetros use o -h
+
 
 ### Utilizando Módulo
 
@@ -90,4 +102,14 @@ from google.cloud import bigquery
 client = bigquery.Client.from_service_account_json(args.gcs_key_json)
 bq_client = Bigquery(client)
 bq_client.table_to_cloud_storage(dataset_id, table_id, bucket_name, filename, job_config=None, export_format="csv", compression_format="gz", location="US", **kwargs)
+```
+
+#### Cloud Storage salvando na Tabela do BigQuery
+
+
+```
+from google.cloud import bigquery
+client = bigquery.Client.from_service_account_json(args.gcs_key_json)
+bq_client = Bigquery(client)
+bq_client.cloud_storage_to_table(bucket_name, filename, dataset_id, table_id, job_config=None, location="US", **kwargs)
 ```

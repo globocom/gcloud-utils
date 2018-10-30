@@ -69,3 +69,13 @@ class Bigquery(BaseClient):
             destination_uri,
             location=location,
             job_config=job_config, **kwargs).result()
+        
+    def cloud_storage_to_table(self, bucket_name, filename, dataset_id, table_id, job_config=None, location="US", **kwargs):
+
+        return self._client.load_table_from_uri(
+            "gs://{}/{}".format(bucket_name, filename),
+            "{}.{}".format(dataset_id, table_id),
+            job_config=job_config,
+            location=location,
+            **kwargs
+        ).result()

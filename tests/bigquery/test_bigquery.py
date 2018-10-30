@@ -186,3 +186,22 @@ class TestBigquery(unittest.TestCase):
         )
         self.assertEqual(bigquery.COMPRESSION_FORMATS[compression_format], job_config_mock.compression)
         self.assertEqual(bigquery.FILE_FORMATS[export_format], job_config_mock.destination_format)
+    
+    def test_import_table_from_google_cloud(self):
+        dataset_id = "test_dataset"
+        table_id = "test_table"
+        bucket_name = "test_bucket"
+        bucket_filename = "test_filename"
+        expected_source = "gs://test_bucket/test_filename"
+        expected_table = "test_dataset.test_table"
+        
+        client_mock = mock.Mock()
+        bigquery = Bigquery(client_mock)
+        bigquery.cloud_storage_to_table(bucket_name, bucket_filename, dataset_id, table_id)
+
+        client_mock.load_table_from_uri.assert_called_once_with(
+            expected_source,
+            expected_table,
+            job_config=None,
+            location='US'
+        )
