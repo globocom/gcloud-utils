@@ -73,7 +73,8 @@ class Bigquery(BaseClient):
     def cloud_storage_to_table(self, bucket_name, filename, dataset_id, table_id, job_config=None, location="US", **kwargs):
 
         full_table = "{}.{}".format(dataset_id, table_id)
-        self._client.create_dataset(dataset_id)
+        dataset = bigquery.Dataset(self._client.dataset(dataset_id))
+        self._client.create_dataset(dataset)
         self._client.create_table(full_table)
 
         return self._client.load_table_from_uri(
