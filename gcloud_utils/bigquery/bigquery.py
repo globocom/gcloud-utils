@@ -69,16 +69,32 @@ class Bigquery(BaseClient):
             destination_uri,
             location=location,
             job_config=job_config, **kwargs).result()
-        
-    def cloud_storage_to_table(self, bucket_name, filename, dataset_id, table_id, job_config=None, location="US", **kwargs):
 
+    def create_dataset(dataset_id):
         dataset = bigquery.Dataset(self._client.dataset(dataset_id))
-        self._client.create_dataset(dataset)
+        return self._client.create_dataset(dataset)
+
+    def create_table(self, dataset_id, table_id):
+
+        try:
+            self.create_dataset(dataset_id)
+        except:
+            pass
 
         dataset_ref = self._client.dataset(dataset_id)
         table_ref = dataset_ref.table(table_id)
         table = bigquery.Table(table_ref)
-        self._client.create_table(table)
+        return self._client.create_table(table)
+
+    def cloud_storage_to_table(self, bucket_name, filename, dataset_id, table_id, job_config=None, location="US", **kwargs):
+
+        try:
+            self.create_table(dataset_id, table_id)
+        except:
+            pass
+
+        dataset_ref = self._client.dataset(dataset_id)
+        table_ref = dataset_ref.table(table_id)
 
         return self._client.load_table_from_uri(
             "gs://{}/{}".format(bucket_name, filename),
