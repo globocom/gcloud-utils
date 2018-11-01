@@ -62,7 +62,7 @@ class Dataproc(object):
             time.sleep(sleep_time)
         return not midle_state
 
-    def create_cluster(self, name, workers, workers_names=None):
+    def create_cluster(self, name, workers, workers_names=None, image_version='1.2.54-deb8'):
         if workers_names is None:
             workers_names = ["worker" + str(i) for i in range(1, workers+1)]
 
@@ -95,7 +95,10 @@ class Dataproc(object):
                         "bootDiskSizeGb": 10,
                         "numLocalSsds": 0
                     }
-                }
+                },
+                "softwareConfig": {
+                    "imageVersion": image_version
+                },
             }
         }
 
