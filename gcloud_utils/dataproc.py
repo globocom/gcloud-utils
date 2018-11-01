@@ -62,7 +62,8 @@ class Dataproc(object):
             time.sleep(sleep_time)
         return not midle_state
 
-    def create_cluster(self, name, workers, workers_names=None, image_version='1.2.54-deb8'):
+    def create_cluster(self, name, workers, workers_names=None,
+                       image_version='1.2.54-deb8', disk_size_in_gb=10):
         if workers_names is None:
             workers_names = ["worker" + str(i) for i in range(1, workers+1)]
 
@@ -83,7 +84,7 @@ class Dataproc(object):
                     ],
                     "machineTypeUri": "n1-standard-4",
                     "diskConfig": {
-                        "bootDiskSizeGb": 10,
+                        "bootDiskSizeGb": disk_size_in_gb,
                         "numLocalSsds": 0
                     }
                 },
@@ -92,7 +93,7 @@ class Dataproc(object):
                     "instanceNames": workers_names,
                     "machineTypeUri": "n1-standard-4",
                     "diskConfig": {
-                        "bootDiskSizeGb": 10,
+                        "bootDiskSizeGb": disk_size_in_gb,
                         "numLocalSsds": 0
                     }
                 },
