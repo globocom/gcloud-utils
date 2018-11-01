@@ -113,3 +113,25 @@ client = bigquery.Client.from_service_account_json(args.gcs_key_json)
 bq_client = Bigquery(client)
 bq_client.cloud_storage_to_table(bucket_name, filename, dataset_id, table_id, job_config=None, location="US", **kwargs)
 ```
+
+### Publicando o módulo no Artifactory
+É necessário primeiro criar um arquivo `~/.pypirc` com o seguinte conteúdo:
+```
+[distutils]
+index-servers =
+    pypi-local
+    ipypi-local
+
+[pypi-local]
+repository: https://artifactory.globoi.com/artifactory/api/pypi/pypi-local
+username: seu_username_do_artifactory_aqui
+
+[ipypi-local]
+repository: https://artifactory.globoi.com/artifactory/api/pypi/ipypi-local
+username: seu_username_do_artifactory_aqui
+```
+
+Depois decida qual é a versão do artefato que vai ser publicado. 
+Digamos que seja a versão **3.2.1**.
+
+Nesse caso, basta então rodar `make install` e depois  `VERSION=3.2.1 make release` e digitar sua senha do Artifactory quando for pedido.
