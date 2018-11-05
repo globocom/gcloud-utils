@@ -47,8 +47,8 @@ class TestDataproc(unittest.TestCase):
         result = dataproc_test.create_cluster("NAME", 2, ["B1", "B2"])
         expected = {
             'clusterName': 'NAME',
-            'projectId': 'project'
-            , 'config': {
+            'projectId': 'project',
+            'config': {
                 'workerConfig': {
                     'machineTypeUri': 'n1-standard-4',
                     'numInstances': 2,
@@ -71,9 +71,12 @@ class TestDataproc(unittest.TestCase):
                     'subnetworkUri': 'default',
                     'zoneUri': 'region-b'
                 },
-                'configBucket': ''
-                }
-            }
+                'configBucket': '',
+                'softwareConfig': {
+                    'imageVersion': '1.2.54-deb8'
+                },
+            },
+        }
         self.assertEqual(result,expected)
 
     def test_delete_cluster(self):
