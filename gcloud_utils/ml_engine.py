@@ -26,9 +26,7 @@ class MlEngine(object):
         self.__logger = logging.getLogger(name=self.__class__.__name__)
         self.client = discovery.build('ml', 'v1', http=http)
 
-    def get_model_versions(self, model_name):
-        """Return all versions"""
-
+    def __get_model_versions_with_metadata(self, model_name):
         parent_model = self.__parent_model_name(model_name)
         request = self.client\
         .projects()\
@@ -39,19 +37,23 @@ class MlEngine(object):
 
         result = []
         try:
-            result = [x['name'].split("/")[-1] for x in version_list['versions']]
+            result = version_list['versions']
         except KeyError as e:
             self.__logger.error("Error on get version: %s\nVersions list is empty",e) 
 
         while 'nextPageToken' in version_list:
             token = version_list['nextPageToken']
             version_list = request.list(parent=parent_model, pageToken=token).execute()
-            page_result = [x['name'].split("/")[-1] for x in version_list['versions']]
+            page_result = version_list['versions']
             result.extend(page_result)
 
-        if version_list:
-            return result
+        return result
 
+    def get_model_versions(self, model_name):
+        """Return all versions"""
+        model_versions = self.__get_model_versions_with_metadata(model_name)
+        if model_versions:
+            return [x['name'].split("/")[-1] for x in model_versions]
         return ["v0_0"]
 
     def __get_last_version(self, versions):
@@ -106,6 +108,35 @@ class MlEngine(object):
          .create(body=body_request, parent=parent_model)
 
         return request
+
+    def delete_model_version(self, model_name, version):
+        """Delete Model version"""
+        self.__logger.info("Deleting version %s of model %s", version, model_name)
+
+        name = "{}/versions/{}".format(self.__parent_model_name(model_name), version)
+        request = self.client \
+         .projects() \
+         .models() \
+         .versions() \
+         .delete(name=name) \
+         .execute()
+
+        return request
+
+    def delete_older_model_versions(self, model_name, n_versions_to_keep):
+        """Keep the most recents model versions and delete older ones.
+        The number of models to keep is specified by the parameter n_versions_to_keep"""
+        def get_use_time(version):
+            use_time = version.get('lastUseTime') or version.get('createTime')
+            return time.strptime(use_time, "%Y-%m-%dT%H:%M:%SZ")
+
+        versions = self.__get_model_versions_with_metadata(model_name)
+        versions.sort(key=get_use_time, reverse=True)
+        versions_name = [x['name'].split("/")[-1] for x in versions]
+        remove_versions = versions_name[n_versions_to_keep:]
+
+        for version in remove_versions:
+            self.delete_model_version(model_name, version)
 
     def increase_model_version(self, model_name, job_id):
         """Increase Model version"""

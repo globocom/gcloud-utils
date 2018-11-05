@@ -3,7 +3,7 @@ import unittest
 from freezegun import freeze_time
 from googleapiclient.http import HttpMock, HttpMockSequence
 from gcloud_utils import ml_engine
-from mock import patch
+from mock import patch, Mock
 
 class TestMlEngine(unittest.TestCase):
     """Test Compute Class"""
@@ -153,5 +153,39 @@ class TestMlEngine(unittest.TestCase):
         ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION", http=http)
         state = ml_engine_test.wait_job_to_finish(job_id, sleep_time=0)
         self.assertEqual(state, "SUCCEEDED")
+
+    @patch('gcloud_utils.ml_engine.discovery')
+    def test_delete_model_version(self, mock_discovery):
+        """Test delete model version"""
+        mock_resource = Mock()
+        mock_discovery.build.return_value = mock_resource
+        mock_resource.projects.return_value = mock_resource
+        mock_resource.models.return_value = mock_resource
+        mock_resource.versions.return_value = mock_resource
+        mock_resource.delete.return_value = mock_resource
+
+        ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION")
+        ml_engine_test.delete_model_version("MODEL", "v4_8")
+
+        mock_resource.delete.assert_called_with(name="projects/PROJECT/models/MODEL/versions/v4_8")
+
+    def test_delete_older_model_versions(self):
+        """Test delete older model_versions.
+
+        The test is loading 7 versions and should keep 5 of them, meaning that the 2 older ones should be deleted.
+        In this case, v3 and v4 are the older ones
+        """
+
+        http = HttpMockSequence([
+            ({'status': '200'},open('tests/fixtures/ml_engine/first_result.json', 'rb').read()),
+            ({'status': '200'},open('tests/fixtures/ml_engine/versions_models.json', 'rb').read()),
+        ])
+
+        ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION", http=http)
+
+        with patch.object(ml_engine_test, 'delete_model_version') as mocked:
+            ml_engine_test.delete_older_model_versions("autoencoder_model", 5)
+            mocked.assert_any_call("autoencoder_model", "v3")
+            mocked.assert_any_call("autoencoder_model", "v4")
 
 
