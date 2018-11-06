@@ -102,7 +102,7 @@ class Storage(BaseClient):
         for blob in blobs:
             blob.delete()
             self.logger.info("Blob %s deleted", blob.name)
-        
+
     def rename_files(self, storage_prefix, new_path):
         """Renames all the blobs with storage_prefix prefix"""
         blobs = self.list_files(storage_prefix)
@@ -112,3 +112,18 @@ class Storage(BaseClient):
             new_full_name = new_path + new_name
             self._bucket.rename_blob(blob, new_full_name)
             self.logger.info("Blob %s renamed to %s", blob.name, new_full_name)
+
+    def ls(self, path):
+        """List files directly under specified path"""
+        blobs = self._bucket.list_blobs(prefix=path)
+        items = []
+        for blob in blobs:
+            relative_path = blob.name.replace(path, "")
+            if relative_path.startswith("/"):
+                relative_path = relative_path.replace("/", "", 1)
+            item = relative_path.split('/')[0]
+            if item not in items:
+                items.append(item)
+        self.logger.info(items)
+
+        return items
