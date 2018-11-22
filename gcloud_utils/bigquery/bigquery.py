@@ -1,6 +1,7 @@
 from google.cloud import bigquery
 from gcloud_utils.bigquery.query_builder import QueryBuilder
 from gcloud_utils.base_client import BaseClient
+from google.api_core.exceptions import NotFound
 
 class Bigquery(BaseClient):
     """Google-Bigquery handler"""
@@ -33,7 +34,7 @@ class Bigquery(BaseClient):
 
         self._query = kwargs["query"]
         return self._client.query(**kwargs).result()
-    
+
     def query_to_table(self, query_or_object, dataset_id, table_id, write_disposition="WRITE_TRUNCATE", job_config=None, **kwargs):
         job_config = job_config if job_config else bigquery.QueryJobConfig()
         table = self._client.dataset(dataset_id).table(table_id)
@@ -42,7 +43,7 @@ class Bigquery(BaseClient):
         job_config.write_disposition = write_disposition
 
         return self.query(query_or_object, job_config=job_config, **kwargs)
-    
+
     def _complete_filename(self, filename, export_format, compression_format):
         if self.COMPRESSION_FORMATS.get(compression_format) and self.FILE_FORMATS.get(export_format):
             complete_filename = "{}_*.{}".format(filename, export_format)
@@ -72,7 +73,7 @@ class Bigquery(BaseClient):
             location=location,
             job_config=job_config, **kwargs).result()
 
-    def create_dataset(dataset_id):
+    def create_dataset(self, dataset_id):
         dataset = bigquery.Dataset(self._client.dataset(dataset_id))
         return self._client.create_dataset(dataset)
 
@@ -108,3 +109,13 @@ class Bigquery(BaseClient):
             location=location,
             **kwargs
         ).result()
+
+    def table_exists(self, table_id, dataset_id, project_id=None):
+        client = bigquery.Client(project_id) if project_id else self._client
+        dataset = client.dataset(dataset_id)
+        table = dataset.table(table_id)
+        try:
+            self._client.get_table(table)
+            return True
+        except NotFound:
+            return False
