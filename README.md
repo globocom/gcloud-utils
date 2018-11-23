@@ -2,7 +2,7 @@
 
 ## BigQuery
 
-Ypu can use the CLI or the python module to run a query in [BigQuery](https://bigquery.cloud.google.com).
+You can use the CLI or the python module to run a query in [BigQuery](https://bigquery.cloud.google.com).
 
 ### Using CLI
 
