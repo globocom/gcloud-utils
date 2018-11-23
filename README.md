@@ -2,22 +2,22 @@
 
 ## BigQuery
 
-Para realizar query no BigQuery pode usar o cli ou através do módulo.
+Ypu can use the CLI or the python module to run a query in [BigQuery](https://bigquery.cloud.google.com).
 
-### Utilizando CLI
+### Using CLI
 
-#### Query salvando em Tabela do BigQuery
+#### Saving Query result in a BigQuery table
 
 ```
 query_to_table dataset table json_key YYYYMMDD query_file -Aquery_arg1=arg -Aquery_arg2=arg
 ```
 
-onde:
-- YYYMMMDD é a data que está rodando o script
-- -A serve para passar argumentos para a query ou arquivo de query
-- json_key é a chave de acesso ao bigquery
+parameters:
+- YYYMMMDD: date of the script
+- -A: parameter to pass args to the query or the query's file
+- json_key: credentials to bigquery service
 
-Para mais parâmetros use o -h
+Use -h to see other parameters options
 
 Por padrão o CLI já utiliza a data que o script está rodando e permite colocar variáveis algumas variáveis fixas nas queries:
 
