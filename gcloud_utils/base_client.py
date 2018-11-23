@@ -1,3 +1,5 @@
+"""base client to google services"""
+
 import os
 import logging
 
@@ -5,6 +7,8 @@ logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
 class BaseClient(object):
+    """ BaseClient BaseClient to google services"""
+
     CREDENTIAL_ENV = "GOOGLE_APPLICATION_CREDENTIALS"
     MODEL_CLIENT = None
 
@@ -17,5 +21,8 @@ class BaseClient(object):
                 os.environ.get(self.CREDENTIAL_ENV)
             )
         else:
-            raise Exception("Need a client or {} environment of your credentials".format(self.CREDENTIAL_ENV))
+            raise Exception(
+                "Need a client or {} environment of your credentials"
+                .format(self.CREDENTIAL_ENV)
+                )
             

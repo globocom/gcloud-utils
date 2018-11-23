@@ -7,7 +7,7 @@ class Storage(BaseClient):
     """Google-Storage handler"""
 
     MODEL_CLIENT = storage
-    
+
     def __init__(self, bucket, client=None):
         super(Storage, self).__init__(client)
         self._bucket = self._client.get_bucket(bucket)

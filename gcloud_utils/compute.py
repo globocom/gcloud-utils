@@ -1,4 +1,4 @@
-"""Start gcloud instance"""
+"""Module to handle Google Compute Service"""
 import time
 import logging
 from googleapiclient import discovery
@@ -20,7 +20,7 @@ class Compute(object):
         self.client = discovery.build('compute', 'v1')
         self.__update_instances(self.client)
 
-    def __request_instances_info(self,client):
+    def __request_instances_info(self, client):
         instances = client.instances().list(project=self.project, zone=self.zone).execute()
         return instances[u'items']
 
