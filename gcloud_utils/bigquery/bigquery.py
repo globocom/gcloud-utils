@@ -1,3 +1,4 @@
+import logging
 from google.cloud import bigquery
 from gcloud_utils.bigquery.query_builder import QueryBuilder
 from gcloud_utils.base_client import BaseClient
@@ -22,8 +23,8 @@ class Bigquery(BaseClient):
 
     MODEL_CLIENT = bigquery
 
-    def __init__(self, client=None):
-        super(Bigquery, self).__init__(client)
+    def __init__(self, client=None, log_level=logging.ERROR):
+        super(Bigquery, self).__init__(client, log_level)
         self._query = None
 
     def query(self, query_or_object, **kwargs):

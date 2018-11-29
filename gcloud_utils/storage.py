@@ -1,5 +1,6 @@
 """Module to download and use files from Google Storage"""
 import os
+import logging
 from google.cloud import storage
 from gcloud_utils.base_client import BaseClient
 
@@ -8,8 +9,8 @@ class Storage(BaseClient):
 
     MODEL_CLIENT = storage
     
-    def __init__(self, bucket, client=None):
-        super(Storage, self).__init__(client)
+    def __init__(self, bucket, client=None, log_level=logging.ERROR):
+        super(Storage, self).__init__(client, log_level)
         self._bucket = self._client.get_bucket(bucket)
 
     def __filter_suffix_files(self, blobs, suffix):
