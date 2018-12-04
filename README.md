@@ -21,7 +21,7 @@ Para mais parâmetros use o -h
 
 Por padrão o CLI já utiliza a data que o script está rodando e permite colocar variáveis algumas variáveis fixas nas queries:
 
-- **previews_date**: data anterior a data declarada que o script está rodando (YYYYMMDD)
+- **previous_date**: data anterior a data declarada que o script está rodando (YYYYMMDD)
 - **start_date**: data declarada que o script está rodando (YYYYMMDD)
 - **next_date**: data posterior a data declarada que o script está rodando (YYYYMMDD)
 
