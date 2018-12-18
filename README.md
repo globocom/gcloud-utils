@@ -1,6 +1,6 @@
 # GCloud Utils
 
-[Documentation](docs/build/rst/index.rst)
+[Documentation](https://gcloud-utils.readthedocs.io/en/latest/)
 
 ## BigQuery
 
