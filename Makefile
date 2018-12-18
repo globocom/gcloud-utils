@@ -3,8 +3,8 @@
 ROOT_PATH=$(shell pwd)
 
 install:
-	@pip install -r requirements.txt --index-url=https://artifactory.globoi.com/artifactory/api/pypi/pypi-all/simple/
-	@pip install -r requirements_test.txt --index-url=https://artifactory.globoi.com/artifactory/api/pypi/pypi-all/simple/
+	@pip install -r requirements.txt
+	@pip install -r requirements_test.txt
 
 clean:
 	-@rm -rf $(ROOT_PATH)/*.egg-info
@@ -25,8 +25,7 @@ endif
 	@git push --tags
 	@git push origin HEAD
 	@echo "Push to artifactory"
-	@python setup.py sdist upload -r pypi-local 
-	@python setup.py sdist upload -r ipypi-local
+	@python setup.py sdist upload -r pypi
 
 
 test:
