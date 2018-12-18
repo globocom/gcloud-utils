@@ -8,9 +8,6 @@ import time
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
-REGION = "us-east1"
-PROJECT = "recomendacao-gcom"
-BUCKET_NAME = "rec-alg"
 PACKAGE_PATH = "packages"
 JOB_DIR = "jobs"
 

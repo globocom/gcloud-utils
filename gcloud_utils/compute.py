@@ -6,14 +6,11 @@ from googleapiclient import discovery
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
-ZONE = "us-west1-b"
-REGION = "us-west1"
-PROJECT = "recomendacao-gcom"
 
 class Compute(object):
     """Google-compute-engine handler"""
 
-    def __init__(self, project=PROJECT, zone=ZONE):
+    def __init__(self, project, zone):
         self.project = project
         self.zone = zone
         self.logger = logging.getLogger(name=self.__class__.__name__)

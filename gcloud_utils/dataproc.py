@@ -11,14 +11,11 @@ from googleapiclient import discovery
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
-REGION = "us-east1"
-PROJECT = "recomendacao-gcom"
-
 
 
 class Dataproc(object):
     "Module to handle with Dataproc cluster"
-    def __init__(self, project=PROJECT, region=REGION, http=None):
+    def __init__(self, project, region, http=None):
         self.__project = project
         self.__region = region
         self.__logger = logging.getLogger(name=self.__class__.__name__)
