@@ -1,60 +1,64 @@
 # GCloud Utils
 
+[Documentation](docs/build/rst/index.rst)
+
 ## BigQuery
 
-Para realizar query no BigQuery pode usar o cli ou através do módulo.
+You can use the CLI or the python module to run a query in [BigQuery](https://bigquery.cloud.google.com).
 
-### Utilizando CLI
+### Using CLI
 
-#### Query salvando em Tabela do BigQuery
+#### Saving Query result in a BigQuery table
 
 ```
 query_to_table dataset table json_key YYYYMMDD query_file -Aquery_arg1=arg -Aquery_arg2=arg
 ```
 
-onde:
-- YYYMMMDD é a data que está rodando o script
-- -A serve para passar argumentos para a query ou arquivo de query
-- json_key é a chave de acesso ao bigquery
+parameters:
+- YYYMMMDD: date of the script
+- -A: parameter to pass args to the query or the query's file
+- json_key: credentials to bigquery service
 
-Para mais parâmetros use o -h
+Use -h to see other parameters options
 
-Por padrão o CLI já utiliza a data que o script está rodando e permite colocar variáveis algumas variáveis fixas nas queries:
+The CLI default is use the current time. 
 
-- **previous_date**: data anterior a data declarada que o script está rodando (YYYYMMDD)
-- **start_date**: data declarada que o script está rodando (YYYYMMDD)
-- **next_date**: data posterior a data declarada que o script está rodando (YYYYMMDD)
+The CLI allows put some fixed variables in queries:
+
+- **previous_date**: previous date of declared current date (YYYYMMDD)
+- **start_date**: declared current date (YYYYMMDD)
+- **next_date**: next date of declared current date (YYYYMMDD)
 
 
-#### Tabela do BigQuery salvando no Cloud Storage
+#### Saving BigQuery's Tabel in Cloud Storage
 
 ```
 table_to_gcs dataset table bucket cloudstorage_filename json_key YYYYMMDD time_delta export_format compression_format
 ```
 
 onde:
-- YYYMMMDD é a data que está rodando o script
-- time_delta é o número de dias para trás que a tabela será pega
-- json_key é a chave de acesso ao bigquery
+- YYYMMMDD: date of the script
+- time_delta amount of days before current date to get the table
+- json_key  credentials to bigquery service
 
-Para mais parâmetros use o -h
+Use -h to see other parameters options
 
-#### Cloud Storage importando Tabela no BigQuery
+#### Cloud Storage importing table in BigQuery
 
 ```
 gcs_to_table bucket cloudstorage_filename dataset table json_key YYYYMMDD
 ```
 
 onde:
-- YYYMMMDD é a data que está rodando o script
-- json_key é a chave de acesso ao bigquery
+- YYYMMMDD: date of the script
+- json_key  credentials to bigquery service
 
-Para mais parâmetros use o -h
+Use -h to see other parameters options
 
 
-### Utilizando Módulo
+### Using the module
 
-#### Query normal
+#### Simple query
 
 ```
 from google.cloud import bigquery
@@ -67,7 +71,7 @@ bq_client = Bigquery(client)
 result = bq_client.query(self, query, **kwargs)
 ```
 
-#### Query com parâmetros
+#### Query with parameters
 
 
 ```
@@ -84,7 +88,7 @@ bq_client = Bigquery(client)
 result = bq_client.query(self, query, **kwargs)
 ```
 
-#### Query salvando em Tabela do BigQuery
+#### Saving Query in BigQuery
 
 
 ```
@@ -94,7 +98,7 @@ bq_client = Bigquery(client)
 bq_client.query_to_table(query_or_object, dataset_id, table_id, write_disposition="WRITE_TRUNCATE", job_config=None, **kwargs)
 ```
 
-#### Tabela do BigQuery salvando no Cloud Storage
+#### Saving BigQuery's table in Cloud Storage
 
 
 ```
@@ -104,7 +108,7 @@ bq_client = Bigquery(client)
 bq_client.table_to_cloud_storage(dataset_id, table_id, bucket_name, filename, job_config=None, export_format="csv", compression_format="gz", location="US", **kwargs)
 ```
 
-#### Cloud Storage salvando na Tabela do BigQuery
+#### Salving Cloud Storage in BigQuery's table
 
 
 ```
@@ -114,8 +118,8 @@ bq_client = Bigquery(client)
 bq_client.cloud_storage_to_table(bucket_name, filename, dataset_id, table_id, job_config=None, location="US", **kwargs)
 ```
 
-### Publicando o módulo no Artifactory
-É necessário primeiro criar um arquivo `~/.pypirc` com o seguinte conteúdo:
+### Publishing the module in Artifactory
+First, write the file `~/.pypirc` like:
 ```
 [distutils]
 index-servers =
@@ -131,7 +135,7 @@ repository: https://artifactory.globoi.com/artifactory/api/pypi/ipypi-local
 username: seu_username_do_artifactory_aqui
 ```
 
-Depois decida qual é a versão do artefato que vai ser publicado. 
-Digamos que seja a versão **3.2.1**.
+Then, decide the version that will be published. 
+Let's say that we will publish the version **3.2.1**.
 
-Nesse caso, basta então rodar `make install` e depois  `VERSION=3.2.1 make release` e digitar sua senha do Artifactory quando for pedido.
+In this case, run first `make install`, then  `VERSION=3.2.1 make release` and put your password when is asked.

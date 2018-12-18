@@ -15,7 +15,7 @@ class TestBaseClient(unittest.TestCase):
             del os.environ[BaseClient.CREDENTIAL_ENV]
         except:
             pass
-        BaseClient.MODEL_CLIENT = None
+        BaseClient._MODEL_CLIENT = None
 
     def test_make_instance_with_previous_client(self):
         client = mock.Mock()
@@ -29,7 +29,7 @@ class TestBaseClient(unittest.TestCase):
         module_mock = mock.Mock()
         class_mock = mock.Mock(**{"from_service_account_json.return_value": client_mock})
         module_mock.Client = class_mock
-        BaseClient.MODEL_CLIENT = module_mock
+        BaseClient._MODEL_CLIENT = module_mock
         base = BaseClient()
         self.assertEqual(client_mock, base._client)
         class_mock.from_service_account_json.assert_called_with(env_path)

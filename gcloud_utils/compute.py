@@ -1,4 +1,4 @@
-"""Start gcloud instance"""
+"""Module to handle Google Compute Service"""
 import time
 import logging
 from googleapiclient import discovery
@@ -6,21 +6,18 @@ from googleapiclient import discovery
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
-ZONE = "us-west1-b"
-REGION = "us-west1"
-PROJECT = "recomendacao-gcom"
 
 class Compute(object):
     """Google-compute-engine handler"""
 
-    def __init__(self, project=PROJECT, zone=ZONE):
+    def __init__(self, project, zone):
         self.project = project
         self.zone = zone
         self.logger = logging.getLogger(name=self.__class__.__name__)
         self.client = discovery.build('compute', 'v1')
         self.__update_instances(self.client)
 
-    def __request_instances_info(self,client):
+    def __request_instances_info(self, client):
         instances = client.instances().list(project=self.project, zone=self.zone).execute()
         return instances[u'items']
 
@@ -49,7 +46,7 @@ class Compute(object):
             self.logger.debug("%s status: %s", instance_name, status)
 
             if not status == expecte_status:
-                action(zone=ZONE, project=PROJECT, instance=instance_name).execute()
+                action(zone=self.zone, project=self.project, instance=instance_name).execute()
                 self.__check_status(instance_name, expecte_status)
 
         except KeyError:

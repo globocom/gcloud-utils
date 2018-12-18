@@ -8,15 +8,15 @@ import time
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
-REGION = "us-east1"
-PROJECT = "recomendacao-gcom"
-BUCKET_NAME = "rec-alg"
 PACKAGE_PATH = "packages"
 JOB_DIR = "jobs"
 
 class MlEngine(object):
     """Google-ml-engine handler"""
-    def __init__(self, project, bucket_name, region, package_path=PACKAGE_PATH, job_dir=JOB_DIR, http=None):
+    def __init__(self, project, bucket_name,
+                 region, package_path=PACKAGE_PATH,
+                 job_dir=JOB_DIR, http=None):
+
         self.project = project
         self.parent = "projects/{}".format(self.project)
         self.bucket_name = bucket_name
@@ -39,7 +39,7 @@ class MlEngine(object):
         try:
             result = version_list['versions']
         except KeyError as e:
-            self.__logger.error("Error on get version: %s\nVersions list is empty",e) 
+            self.__logger.error("Error on get version: %s\nVersions list is empty", e)
 
         while 'nextPageToken' in version_list:
             token = version_list['nextPageToken']
@@ -144,20 +144,20 @@ class MlEngine(object):
         versions = self.get_model_versions(model_name)
         last_version = self.__get_last_version(versions)
         new_version = self.__increase_version(last_version)
-        
-        request = self.create_model_version(model_name,new_version,job_id)
 
-        return (request,new_version)
+        request = self.create_model_version(model_name, new_version,job_id)
+
+        return (request, new_version)
 
 
     def set_version_as_default(self, model, version):
         """Set a model version as default"""
-        version_full_path = "{}/models/{}/versions/{}".format(self.parent, model,version)
+        version_full_path = "{}/models/{}/versions/{}".format(self.parent, model, version)
         request = self.client\
          .projects()\
          .models()\
          .versions()\
-         .setDefault(body={},name=version_full_path)
+         .setDefault(body={}, name=version_full_path)
         return request
 
     def list_jobs(self, filter_final_state='SUCCEEDED'):

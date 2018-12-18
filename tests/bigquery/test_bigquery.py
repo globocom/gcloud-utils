@@ -17,7 +17,7 @@ class TestBigquery(unittest.TestCase):
     "Test Bigquery module"
 
     def test_is_using_base_contract(self):
-        self.assertEqual(bigquery, Bigquery.MODEL_CLIENT)
+        self.assertEqual(bigquery, Bigquery._MODEL_CLIENT)
 
     def test_make_query(self):
         query = "select * from test"
