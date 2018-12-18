@@ -68,7 +68,8 @@ def main():
 
     start_date = datetime.strptime(args.start_date, DEFAULT_DATE_FORMAT)
     one_day = timedelta(1)
-    query_args["previews_date"] = query_args.get("previews_date", (start_date - one_day).strftime(DEFAULT_DATE_FORMAT))
+    query_args["previous_date"] = query_args.get("previous_date", (start_date - one_day).strftime(DEFAULT_DATE_FORMAT))
+    query_args["previews_date"] = query_args["previous_date"]
     query_args["start_date"] = query_args.get("start_date", start_date.strftime(DEFAULT_DATE_FORMAT))
     query_args["next_date"] = query_args.get("next_date", (start_date + one_day).strftime(DEFAULT_DATE_FORMAT))
 

@@ -17,7 +17,7 @@ class TestBaseClient(unittest.TestCase):
             pass
         BaseClient.MODEL_CLIENT = None
 
-    def test_make_instance_with_previews_client(self):
+    def test_make_instance_with_previous_client(self):
         client = mock.Mock()
         base = BaseClient(client)
         self.assertEqual(client, base._client)
