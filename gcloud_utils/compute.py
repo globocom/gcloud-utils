@@ -46,7 +46,7 @@ class Compute(object):
             self.logger.debug("%s status: %s", instance_name, status)
 
             if not status == expecte_status:
-                action(zone=ZONE, project=PROJECT, instance=instance_name).execute()
+                action(zone=self.zone, project=self.project, instance=instance_name).execute()
                 self.__check_status(instance_name, expecte_status)
 
         except KeyError:
