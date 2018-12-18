@@ -17,7 +17,7 @@ class TestStorage(unittest.TestCase):
             del os.environ[Storage.CREDENTIAL_ENV]
         except:
             pass
-        Storage.MODEL_CLIENT = storage
+        Storage._MODEL_CLIENT = storage
 
     def test_get_abs_path(self):
         os.environ[Storage.CREDENTIAL_ENV] = "./tests/fixtures/mock_credentials.json"
@@ -26,7 +26,7 @@ class TestStorage(unittest.TestCase):
         bucket_mock = mock.Mock()
         bucket_mock.name = bucket_name
         client_mock = mock.Mock(**{"get_bucket.return_value": bucket_mock})
-        Storage.MODEL_CLIENT.Client = mock.Mock(**{"from_service_account_json.return_value": client_mock})
+        Storage._MODEL_CLIENT.Client = mock.Mock(**{"from_service_account_json.return_value": client_mock})
         storage_test = Storage(bucket=bucket_name)
         abs_path = storage_test.get_abs_path("path/something/inside/bucket")
 

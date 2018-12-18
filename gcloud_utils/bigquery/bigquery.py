@@ -23,7 +23,7 @@ class Bigquery(BaseClient):
         "snappy": "SNAPPY"
     }
 
-    MODEL_CLIENT = bigquery
+    _MODEL_CLIENT = bigquery
 
     def __init__(self, client=None, log_level=logging.ERROR):
         super(Bigquery, self).__init__(client, log_level)

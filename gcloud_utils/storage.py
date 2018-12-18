@@ -7,7 +7,7 @@ from gcloud_utils.base_client import BaseClient
 class Storage(BaseClient):
     """Google-Storage handler"""
 
-    MODEL_CLIENT = storage
+    _MODEL_CLIENT = storage
 
     def __init__(self, bucket, client=None, log_level=logging.ERROR):
         super(Storage, self).__init__(client, log_level)
