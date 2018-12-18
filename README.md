@@ -1,5 +1,7 @@
 # GCloud Utils
 
+(Documentation)[docs/build/rst/index.rst]
+
 ## BigQuery
 
 You can use the CLI or the python module to run a query in [BigQuery](https://bigquery.cloud.google.com).
