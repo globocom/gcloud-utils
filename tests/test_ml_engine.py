@@ -214,5 +214,3 @@ class TestMlEngine(unittest.TestCase):
             ml_engine_test.delete_older_model_versions("autoencoder_model", 5)
             mocked.assert_any_call("autoencoder_model", "v3")
             mocked.assert_any_call("autoencoder_model", "v4")
-
-
