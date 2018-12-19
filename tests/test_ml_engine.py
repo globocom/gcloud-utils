@@ -20,8 +20,8 @@ class TestMlEngine(unittest.TestCase):
         # Test API
         self.assertEqual(post_to_create_model.uri, "https://ml.googleapis.com/v1/projects/PROJECT/models?alt=json")
         # Test Body Post
-        expected = """{"name": "MODEL", "description": "DESCRIPTION"}"""
-        self.assertEqual(post_to_create_model.body, expected)
+        expected = {"name": "MODEL", "description": "DESCRIPTION"}
+        self.assertDictEqual(json.loads(post_to_create_model.body), expected)
 
     def test_create_new_model_version_4_5(self):
         """Test the creation of new model"""

@@ -40,7 +40,7 @@ class TestMlEngine(unittest.TestCase):
         # Test API
         self.assertEqual(post_to_create.uri, "https://ml.googleapis.com/v1/projects/PROJECT/jobs?alt=json")
         # Test Body Post
-        self.assertEqual(json.loads(post_to_create.body), self.main_body)
+        self.assertDictEqual(json.loads(post_to_create.body), self.main_body)
 
     @freeze_time("1994-04-27 12:00:01")
     def test_create_training_job_with_packages(self):
