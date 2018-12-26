@@ -4,6 +4,7 @@ from freezegun import freeze_time
 from googleapiclient.http import HttpMock, HttpMockSequence
 from gcloud_utils import ml_engine
 from mock import patch, Mock
+import json
 
 class TestMlEngine(unittest.TestCase):
     """Test Compute Class"""
@@ -35,8 +36,8 @@ class TestMlEngine(unittest.TestCase):
         (post_to_create_model, new_version) = ml_engine_test.increase_model_version("MODEL", "JOB_ID")
 
         self.assertEqual(
-            post_to_create_model.body,
-            '{"deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export", "name": "v4_5"}'
+            json.loads(post_to_create_model.body),
+            json.loads('{"deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export", "name": "v4_5"}')
         )
         self.assertEqual(new_version, "v4_5")
 
@@ -52,8 +53,8 @@ class TestMlEngine(unittest.TestCase):
         (post_to_create_model, new_version) = ml_engine_test.increase_model_version("MODEL", "JOB_ID")
 
         self.assertEqual(
-            post_to_create_model.body,
-            '{"deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export", "name": "v5_0"}'
+            json.loads(post_to_create_model.body),
+            json.loads('{"deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export", "name": "v5_0"}')
         )
         self.assertEqual(new_version,"v5_0")
 
@@ -69,8 +70,8 @@ class TestMlEngine(unittest.TestCase):
         (post_to_create_model, new_version) = ml_engine_test.increase_model_version("MODEL", "JOB_ID")
 
         self.assertEqual(
-            post_to_create_model.body,
-            '{"deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export", "name": "v0_1"}'
+            json.loads(post_to_create_model.body),
+            json.loads('{"deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export", "name": "v0_1"}')
         )
         self.assertEqual(new_version,"v0_1")
 
@@ -110,7 +111,7 @@ class TestMlEngine(unittest.TestCase):
         # Test API
         self.assertEqual(post_to_create.uri, uri_expected)
         # Test Body Post
-        self.assertEqual(post_to_create.body, body_expected)
+        self.assertEqual(json.loads(post_to_create.body), json.loads(body_expected))
 
     @freeze_time("1994-04-27 12:00:01")
     def test_start_prediciton_job_exception_input_type_invalid(self):
