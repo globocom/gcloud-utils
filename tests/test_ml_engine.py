@@ -5,6 +5,7 @@ from googleapiclient.http import HttpMock, HttpMockSequence
 from gcloud_utils import ml_engine
 from mock import patch, Mock
 import json
+import ast
 
 class TestMlEngine(unittest.TestCase):
     """Test Compute Class"""
@@ -21,8 +22,8 @@ class TestMlEngine(unittest.TestCase):
         # Test API
         self.assertEqual(post_to_create_model.uri, "https://ml.googleapis.com/v1/projects/PROJECT/models?alt=json")
         # Test Body Post
-        expected = {"name": "MODEL", "description": "DESCRIPTION"}
-        self.assertDictEqual(json.loads(post_to_create_model.body), expected)
+        expected = {'name': 'MODEL', 'description': 'DESCRIPTION'}
+        self.assertDictEqual(ast.literal_eval(post_to_create_model.body), expected)
 
     def test_create_new_model_version_4_5(self):
         """Test the creation of new model"""
