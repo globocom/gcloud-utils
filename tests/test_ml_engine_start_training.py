@@ -6,6 +6,7 @@ from freezegun import freeze_time
 from googleapiclient.http import HttpMock, HttpMockSequence
 from gcloud_utils import ml_engine
 from mock import patch
+import ast
 
 class TestMlEngine(unittest.TestCase):
     """Test Compute Class"""
@@ -40,7 +41,7 @@ class TestMlEngine(unittest.TestCase):
         # Test API
         self.assertEqual(post_to_create.uri, "https://ml.googleapis.com/v1/projects/PROJECT/jobs?alt=json")
         # Test Body Post
-        self.assertDictEqual(json.loads(post_to_create.body), self.main_body)
+        self.assertDictEqual(ast.literal_eval(post_to_create.body), self.main_body)
 
     @freeze_time("1994-04-27 12:00:01")
     def test_create_training_job_with_packages(self):
@@ -49,7 +50,7 @@ class TestMlEngine(unittest.TestCase):
         post_to_create = self.ml_engine_test.start_training_job("PRODUTO", "PACOTE", "PACOTE.MODULO", ["PACOTE.EXTRA"])
 
         # Test Body Post
-        self.assertDictEqual(json.loads(post_to_create.body), self.main_body)
+        self.assertDictEqual(ast.literal_eval(post_to_create.body), self.main_body)
 
     @freeze_time("1994-04-27 12:00:01")
     def test_create_training_job_with_runtime_version(self):
@@ -58,7 +59,7 @@ class TestMlEngine(unittest.TestCase):
         post_to_create =self. ml_engine_test.start_training_job("PRODUTO", "PACOTE", "PACOTE.MODULO", runtime_version="1.8")
 
         # Test Body Post
-        self.assertDictEqual(json.loads(post_to_create.body), self.main_body)
+        self.assertDictEqual(ast.literal_eval(post_to_create.body), self.main_body)
 
     @freeze_time("1994-04-27 12:00:01")
     def test_create_training_job_with_python_version(self):
@@ -66,4 +67,4 @@ class TestMlEngine(unittest.TestCase):
 
         post_to_create = self.ml_engine_test.start_training_job("PRODUTO", "PACOTE", "PACOTE.MODULO", python_version="3.5")
         # Test Body Post
-        self.assertDictEqual(json.loads(post_to_create.body), self.main_body)
+        self.assertDictEqual(ast.literal_eval(post_to_create.body), self.main_body)
