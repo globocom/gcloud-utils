@@ -1,5 +1,7 @@
 # GCloud Utils
 
+![badge](https://api.travis-ci.org/globocom/gcloud-utils.svg?branch=master)
+
 [Documentation](https://gcloud-utils.readthedocs.io/en/latest/)
 
 ## BigQuery
