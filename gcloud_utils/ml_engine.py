@@ -197,7 +197,7 @@ class MlEngine(object):
         self.__logger.info("Job finished with status %s", state)
         return state
 
-    def start_training_job(self, job_id_prefix, package_name, module, extra_packages=[], runtime_version="1.0", python_version="", **args):
+    def start_training_job(self, job_id_prefix, package_name, module, extra_packages=[], runtime_version="1.0", python_version="", scale_tier="", master_type="", worker_type="", parameter_server_type="", worker_count="", parameter_server_count="",**args):
         """Start a training job"""
         main_package_uri = "{}/{}".format(self.package_full_path, package_name)
         packages_uris = ["{}/{}".format(self.package_full_path, ep) for ep in extra_packages]
@@ -228,6 +228,24 @@ class MlEngine(object):
 
         if python_version:
             body_request["trainingInput"]["pythonVersion"] = python_version
+        
+        if scale_tier:
+            body_request["trainingInput"]["scaleTier"] = scale_tier
+
+        if master_type:
+            body_request["trainingInput"]["masterType"] = master_type
+        
+        if worker_type:
+            body_request["trainingInput"]["workerType"] = worker_type
+        
+        if parameter_server_type:
+            body_request["trainingInput"]["parameterServerType"] = parameter_server_type
+        
+        if worker_count:
+            body_request["trainingInput"]["workerCount"] = worker_count
+        
+        if parameter_server_count:
+            body_request["trainingInput"]["parameterServerCount"] = parameter_server_count
 
         job = request.jobs().create(parent=self.parent, body=body_request)
         return job
