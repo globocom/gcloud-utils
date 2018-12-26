@@ -21,8 +21,8 @@ class TestMlEngine(unittest.TestCase):
         # Test API
         self.assertEqual(post_to_create_model.uri, "https://ml.googleapis.com/v1/projects/PROJECT/models?alt=json")
         # Test Body Post
-        expected = """{"name": "MODEL", "description": "DESCRIPTION"}"""
-        self.assertEqual(post_to_create_model.body, expected)
+        expected = {"name": "MODEL", "description": "DESCRIPTION"}
+        self.assertDictEqual(json.loads(post_to_create_model.body), expected)
 
     def test_create_new_model_version_4_5(self):
         """Test the creation of new model"""
@@ -102,7 +102,19 @@ class TestMlEngine(unittest.TestCase):
 
         post_to_create = ml_engine_test.start_predict_job("PRODUTO", "MODEL_NAME", [input_file], output_file)
 
-        body_expected = """{"predictionInput": {"outputPath": "gs://BUCKET/recommendation/matrix_prefs/PRODUTO/output/part-00000", "region": "us-east1", "inputPaths": ["gs://BUCKET/recommendation/matrix_prefs/PRODUTO/input/part-00000"], "modelName": "projects/PROJECT/models/MODEL_NAME", "dataFormat": "JSON"}, "jobId": "PRODUTO_MODEL_NAME_1994_04_27_12_00_01_prediction"}"""
+        body_expected = {
+            "predictionInput": 
+                {
+                    "outputPath": "gs://BUCKET/recommendation/matrix_prefs/PRODUTO/output/part-00000",
+                    "region": "us-east1",
+                    "inputPaths": [
+                        "gs://BUCKET/recommendation/matrix_prefs/PRODUTO/input/part-00000"
+                        ],
+                    "modelName": "projects/PROJECT/models/MODEL_NAME",
+                    "dataFormat": "JSON"
+                },
+            "jobId": "PRODUTO_MODEL_NAME_1994_04_27_12_00_01_prediction"
+        }
         method_expected = "POST"
         uri_expected = "https://ml.googleapis.com/v1/projects/PROJECT/jobs?alt=json"
 
@@ -203,5 +215,3 @@ class TestMlEngine(unittest.TestCase):
             ml_engine_test.delete_older_model_versions("autoencoder_model", 5)
             mocked.assert_any_call("autoencoder_model", "v3")
             mocked.assert_any_call("autoencoder_model", "v4")
-
-
