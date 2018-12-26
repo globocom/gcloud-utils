@@ -67,3 +67,71 @@ class TestMlEngine(unittest.TestCase):
         post_to_create = self.ml_engine_test.start_training_job("PRODUTO", "PACOTE", "PACOTE.MODULO", python_version="3.5")
         # Test Body Post
         self.assertDictEqual(json.loads(post_to_create.body), self.main_body)
+
+    @freeze_time("1994-04-27 12:00:01")
+    def test_create_training_job_with_scale_tier(self):
+        self.main_body["trainingInput"]["scaleTier"] = "CUSTOM"
+        # self.main_body["trainingInput"]["masterType"] = "complex_model_l"
+        # self.main_body["trainingInput"]["workerType"] = "complex_model_l"
+        # self.main_body["trainingInput"]["parameterServerType"] = "large_model"
+        # self.main_body["trainingInput"]["workerCount"] = 9
+        # self.main_body["trainingInput"]["parameterServerCount"] = 3
+
+
+        post_to_create = self.ml_engine_test.start_training_job("PRODUTO", "PACOTE", "PACOTE.MODULO", scale_tier="CUSTOM")
+        # Test Body Post
+        self.assertDictEqual(json.loads(post_to_create.body), self.main_body)
+
+    @freeze_time("1994-04-27 12:00:01")
+    def test_create_training_job_with_master_type(self):
+        self.main_body["trainingInput"]["masterType"] = "complex_model_l"
+
+        post_to_create = self.ml_engine_test.start_training_job("PRODUTO", "PACOTE", "PACOTE.MODULO", master_type="complex_model_l")
+        # Test Body Post
+        self.assertDictEqual(json.loads(post_to_create.body), self.main_body)
+
+    @freeze_time("1994-04-27 12:00:01")
+    def test_create_training_job_with_worker_type(self):
+        self.main_body["trainingInput"]["workerType"] = "complex_model_l"
+
+        post_to_create = self.ml_engine_test.start_training_job("PRODUTO", "PACOTE", "PACOTE.MODULO", worker_type="complex_model_l")
+        # Test Body Post
+        self.assertDictEqual(json.loads(post_to_create.body), self.main_body)
+
+    @freeze_time("1994-04-27 12:00:01")
+    def test_create_training_job_with_parameter_server_type(self):
+        self.main_body["trainingInput"]["parameterServerType"] = "large_model"
+
+        post_to_create = self.ml_engine_test.start_training_job("PRODUTO", "PACOTE", "PACOTE.MODULO", parameter_server_type="large_model")
+        # Test Body Post
+        self.assertDictEqual(json.loads(post_to_create.body), self.main_body)
+
+    @freeze_time("1994-04-27 12:00:01")
+    def test_create_training_job_with_worker_count(self):
+        self.main_body["trainingInput"]["workerCount"] = 9
+
+        post_to_create = self.ml_engine_test.start_training_job("PRODUTO", "PACOTE", "PACOTE.MODULO", worker_count=9)
+        # Test Body Post
+        self.assertDictEqual(json.loads(post_to_create.body), self.main_body)
+
+    @freeze_time("1994-04-27 12:00:01")
+    def test_create_training_job_with_parameter_server_count(self):
+        self.main_body["trainingInput"]["parameterServerCount"] = 3
+
+        post_to_create = self.ml_engine_test.start_training_job("PRODUTO", "PACOTE", "PACOTE.MODULO", parameter_server_count=3)
+        # Test Body Post
+        self.assertDictEqual(json.loads(post_to_create.body), self.main_body)
+
+    @freeze_time("1994-04-27 12:00:01")
+    def test_create_training_job_with_custom_engine(self):
+        self.main_body["trainingInput"]["scaleTier"] = "CUSTOM"
+        self.main_body["trainingInput"]["masterType"] = "complex_model_l"
+        self.main_body["trainingInput"]["workerType"] = "complex_model_l"
+        self.main_body["trainingInput"]["parameterServerType"] = "large_model"
+        self.main_body["trainingInput"]["workerCount"] = 9
+        self.main_body["trainingInput"]["parameterServerCount"] = 3
+
+        post_to_create = self.ml_engine_test.start_training_job("PRODUTO", "PACOTE", "PACOTE.MODULO", scale_tier="CUSTOM", master_type="complex_model_l", 
+                        worker_type="complex_model_l", parameter_server_type="large_model", worker_count=9, parameter_server_count=3)
+        # Test Body Post
+        self.assertDictEqual(json.loads(post_to_create.body), self.main_body)
