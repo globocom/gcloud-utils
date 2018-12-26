@@ -123,7 +123,7 @@ class TestMlEngine(unittest.TestCase):
         # Test API
         self.assertEqual(post_to_create.uri, uri_expected)
         # Test Body Post
-        self.assertEqual(json.loads(post_to_create.body), json.loads(body_expected))
+        self.assertEqual(json.loads(post_to_create.body), body_expected)
 
     @freeze_time("1994-04-27 12:00:01")
     def test_start_prediciton_job_exception_input_type_invalid(self):
