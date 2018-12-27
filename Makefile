@@ -20,8 +20,8 @@ ifndef VERSION
 endif
 	@echo $(VERSION) > version
 	@git add version
-	@git tag $(VERSION)
 	@git commit -m "Bump $(VERSION)"
+	@git tag $(VERSION)
 	@git push --tags
 	@git push origin HEAD
 	@echo "Push to artifactory"
@@ -34,10 +34,10 @@ test:
 coverage:
 	@coverage run --source=./gcloud_utils/ -m pytest
 	@coverage report -m
-	@coverage xml 
+	@coverage xml
 
 lint:
 	@pylint ./gcloud_utils/
 
-sonar: coverage 
+sonar: coverage
 	sonar-scanner
