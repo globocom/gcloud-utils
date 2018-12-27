@@ -1,6 +1,6 @@
 # GCloud Utils
 
-![badge](https://api.travis-ci.org/globocom/gcloud-utils.svg?branch=master)
+[![Build Status](https://travis-ci.org/globocom/gcloud-utils.svg?branch=master)](https://travis-ci.org/globocom/gcloud-utils)
 
 [Documentation](https://gcloud-utils.readthedocs.io/en/latest/)
 
