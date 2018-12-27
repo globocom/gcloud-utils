@@ -7,7 +7,7 @@ with open("requirements.txt") as reqs:
     requirements = reqs.read().split("\n")
 
 setup(
-    name="gcloud_utils",
+    name="gcloud-utils",
     version=version,
     description="handle gcloud services",
     author="Big Data",
