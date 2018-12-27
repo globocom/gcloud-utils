@@ -24,7 +24,7 @@ endif
 	@git tag $(VERSION)
 	@git push --tags
 	@git push origin HEAD
-	@echo "Push to artifactory"
+	@echo "Pushing lib"
 	@python setup.py sdist upload -r pypi
 
 
