@@ -7,15 +7,15 @@ with open("requirements.txt") as reqs:
     requirements = reqs.read().split("\n")
 
 setup(
-    name="gcloud-utils",
+    name="gcloud_utils",
     version=version,
     description="handle gcloud services",
     author="Big Data",
     author_email="bigdata@corp.globo.com",
     scripts=['cli/query_to_table', 'cli/table_to_gcs', 'cli/gcs_to_table'],
     license='MIT',
-    url = 'https://gitlab.globoi.com/bigdata/gcloud-utils',
-    download_url = 'https://gitlab.globoi.com/bigdata/gcloud-utils/repository/master/archive.tar.gz',
+    url = 'https://github.com/globocom/gcloud-utils/',
+    download_url = 'https://github.com/globocom/gcloud-utils/archive/master.zip',
     install_requires=requirements,
     packages=find_packages()
 )
