@@ -11,8 +11,6 @@ clean:
 	-@rm -rf $(ROOT_PATH)/dist
 	-@rm -rf $(ROOT_PATH)/build
 
-
-
 release: clean
 ifndef VERSION
 	@echo "USAGE:\n make VERSION=XXX release"
@@ -26,7 +24,6 @@ endif
 	@git push origin HEAD
 	@echo "Pushing lib"
 	@python setup.py sdist upload -r pypi
-
 
 test:
 	@pytest

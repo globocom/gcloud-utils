@@ -4,6 +4,7 @@ from googleapiclient.http import HttpMockSequence
 from gcloud_utils import dataproc
 from freezegun import freeze_time
 
+
 class TestDataproc(unittest.TestCase):
     """Test Compute Class"""
 
@@ -89,8 +90,8 @@ class TestDataproc(unittest.TestCase):
         result = dataproc_test.delete_cluster("NAME")
         self.assertEqual(result['content-length'],'0')
 
-    @freeze_time("1994-04-27 12:00:01")
-    def test_submit_job_success(self):
+    @freeze_time('1994-04-27 12:00:01')
+    def test_submit_job_successfully(self):
         http_mocked = HttpMockSequence([
             ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
             ({'status': '200'}, 'echo_request_body'),
@@ -99,14 +100,14 @@ class TestDataproc(unittest.TestCase):
             ({'status': '200'}, open('tests/fixtures/dataproc/job_status_done.json', 'rb').read())
         ])
 
-        dataproc_test = dataproc.Dataproc(project="project", region="region", http=http_mocked)
+        dataproc_test = dataproc.Dataproc(project='project', region='region', http=http_mocked)
         result = dataproc_test.submit_job(
-            "CLUSTER",
-            "BUCKET",
-            ["/path/to/jar/jarname.jar"],
-            "main",
-            ["arg1", "arg2"]
-            )
+            'CLUSTER',
+            'BUCKET',
+            ['/path/to/jar/jarname.jar'],
+            'main',
+            ['arg1', 'arg2']
+        )
 
         body_request_expected = {
             'projectId': 'project',
@@ -115,14 +116,53 @@ class TestDataproc(unittest.TestCase):
                 'sparkJob': {
                     'jarFileUris': ['/path/to/jar/jarname.jar'],
                     'mainClass': 'main',
-                    'args': ['arg1', 'arg2']},
+                    'args': ['arg1', 'arg2']
+                },
                 'reference': {'jobId': 'main_1994_04_27_12_00_01'}
             }
         }
 
         self.assertEqual(body_request_expected, result)
 
-    @freeze_time("1994-04-27 12:00:01")
+    @freeze_time('1994-04-27 12:00:01')
+    def test_submit_job_with_properties_successfully(self):
+        http_mocked = HttpMockSequence([
+            ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
+            ({'status': '200'}, 'echo_request_body'),
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_running.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_running.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_done.json', 'rb').read())
+        ])
+
+        dataproc_test = dataproc.Dataproc(project='project', region='region', http=http_mocked)
+        result = dataproc_test.submit_job(
+            'CLUSTER',
+            'BUCKET',
+            ['/path/to/jar/jarname.jar'],
+            'main',
+            ['arg1', 'arg2'],
+            {'a_property': 'a_property_value'}
+        )
+
+        body_request_expected = {
+            'projectId': 'project',
+            'job': {
+                'placement': {'clusterName': 'CLUSTER'},
+                'sparkJob': {
+                    'jarFileUris': ['/path/to/jar/jarname.jar'],
+                    'mainClass': 'main',
+                    'args': ['arg1', 'arg2'],
+                    'properties': {
+                        'a_property': 'a_property_value'
+                    }
+                },
+                'reference': {'jobId': 'main_1994_04_27_12_00_01'}
+            }
+        }
+
+        self.assertEqual(body_request_expected, result)
+
+    @freeze_time('1994-04-27 12:00:01')
     def test_submit_job_error(self):
         http_mocked = HttpMockSequence([
             ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
@@ -132,7 +172,7 @@ class TestDataproc(unittest.TestCase):
             ({'status': '200'}, open('tests/fixtures/dataproc/job_status_done.json', 'rb').read())
         ])
 
-        dataproc_test = dataproc.Dataproc(project="project", region="region", http=http_mocked)
+        dataproc_test = dataproc.Dataproc(project='project', region='region', http=http_mocked)
 
         with self.assertRaises(Exception):
             dataproc_test.submit_job("", "", [""], "", [])

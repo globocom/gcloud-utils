@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 class Dataproc(object):
-    "Module to handle with Dataproc cluster"
+    """Module to handle with Dataproc cluster"""
     def __init__(self, project, region, http=None):
         self.__project = project
         self.__region = region
@@ -22,7 +22,7 @@ class Dataproc(object):
         self.__client = discovery.build('dataproc', 'v1', http=http)
 
     def list_clusters(self):
-        "List all clusters"
+        """List all clusters"""
         request = self.__client.projects().regions().clusters()
 
         result = request.list(projectId=self.__project, region=self.__region).execute()
@@ -66,8 +66,8 @@ class Dataproc(object):
 
         "Create a cluster"
         data_to_create = {
-            "projectId":self.__project,
-            "clusterName":name,
+            "projectId": self.__project,
+            "clusterName": name,
             "config": {
                 "configBucket": "",
                 "gceClusterConfig": {
@@ -111,7 +111,7 @@ class Dataproc(object):
         return result
 
     def delete_cluster(self, name):
-        "Delete cluster by name"
+        """Delete cluster by name"""
         result = self.__client.projects()\
             .regions()\
             .clusters()\
@@ -122,7 +122,8 @@ class Dataproc(object):
 
         return result
 
-    def submit_job(self, cluster_name, gs_bucket, jar_paths, main_class, list_args):
+    def submit_job(self, cluster_name, gs_bucket, jar_paths, main_class, list_args,
+                   properties=None):
         """Submits the Spark job to the cluster, assuming jars at `jar_paths` list has
         already been uploaded to `gs_bucket`"""
 
@@ -143,12 +144,14 @@ class Dataproc(object):
                     'jobId': job_id
                 },
                 'sparkJob': {
-                    'args':list_args,
-                    'mainClass':main_class,
-                    'jarFileUris':jar_files
+                    'args': list_args,
+                    'mainClass': main_class,
+                    'jarFileUris': jar_files
                 }
             }
         }
+        if properties is not None:
+            job_details['job']['sparkJob']['properties'] = properties
 
         result = self.__client.projects().regions().jobs().submit(
             projectId=self.__project,
