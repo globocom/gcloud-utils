@@ -122,7 +122,8 @@ class Dataproc(object):
 
         return result
 
-    def submit_job(self, cluster_name, gs_bucket, jar_paths, main_class, list_args):
+    def submit_job(self, cluster_name, gs_bucket, jar_paths, main_class, list_args,
+                   properties=None):
         """Submits the Spark job to the cluster, assuming jars at `jar_paths` list has
         already been uploaded to `gs_bucket`"""
 
@@ -149,6 +150,8 @@ class Dataproc(object):
                 }
             }
         }
+        if properties is not None:
+            job_details['job']['sparkJob']['properties'] = properties
 
         result = self.__client.projects().regions().jobs().submit(
             projectId=self.__project,
