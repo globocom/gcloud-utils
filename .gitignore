@@ -114,3 +114,6 @@ credentials.json
 
 #Sonar Scaner
 .scannerwork
+
+# PyCharm IDE
+.idea/
