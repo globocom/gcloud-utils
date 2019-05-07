@@ -104,9 +104,9 @@ class TestDataproc(unittest.TestCase):
         result = dataproc_test.submit_job(
             'CLUSTER',
             'BUCKET',
-            ['/path/to/jar/jarname.jar'],
-            'main',
-            ['arg1', 'arg2']
+            ['arg1', 'arg2'],
+            jar_paths=['/path/to/jar/jarname.jar'],
+            main_class='main'
         )
 
         body_request_expected = {
@@ -138,10 +138,10 @@ class TestDataproc(unittest.TestCase):
         result = dataproc_test.submit_job(
             'CLUSTER',
             'BUCKET',
-            ['/path/to/jar/jarname.jar'],
-            'main',
             ['arg1', 'arg2'],
-            {'a_property': 'a_property_value'}
+            jar_paths=['/path/to/jar/jarname.jar'],
+            main_class='main',
+            properties={'a_property': 'a_property_value'}
         )
 
         body_request_expected = {
