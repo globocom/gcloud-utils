@@ -145,7 +145,7 @@ class Dataproc(object):
         return result
 
     def submit_pyspark_job(self, cluster_name, gs_bucket, list_args,
-                           main_pyspark_file, python_files):
+                           main_pyspark_file, python_files, archive_uris=None, properties=None):
         """Submit the pyspark job to cluster, assuming py files at `python_files` list has
         already been uploaded to `gs_bucket """
 
@@ -162,6 +162,12 @@ class Dataproc(object):
             "pythonFileUris": gs_python_files
             }
                       }
+        if archive_uris:
+            submit_dict["pysparkJob"].update({"archiveUris":archive_uris})
+
+        if properties:
+            submit_dict["pysparkJob"].update({"properties":properties})
+
         return self.__submit_job(job_id, cluster_name, submit_dict)
 
     def submit_spark_job(self, cluster_name, gs_bucket, list_args,
