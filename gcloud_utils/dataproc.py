@@ -139,7 +139,6 @@ class Dataproc(object):
             projectId=self.__project,
             region=self.__region,
             body=job_details).execute()
-        print(result)
         self.__logger.info("Submitted job ID %s", job_id)
 
         self.__wait_job_finish(job_id)
