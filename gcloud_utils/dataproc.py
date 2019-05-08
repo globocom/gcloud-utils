@@ -154,7 +154,7 @@ class Dataproc(object):
         datetime_now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
         main_python_file = os.path.join(gs_root, main_pyspark_file)
-        job_id = "pyspark_{}_{}".format(os.path.basename(main_pyspark_file), datetime_now)
+        job_id = "pyspark_{}_{}".format(os.path.basename(main_pyspark_file).replace(".py",""), datetime_now).replace(".","_")
         gs_python_files = [os.path.join(gs_root, python_file) for python_file in python_files]
 
         submit_dict = {"pysparkJob": {
