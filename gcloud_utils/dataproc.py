@@ -24,7 +24,7 @@ class Dataproc(object):
         self.__pattern = re.compile('[\W_]+')
 
     def __format_job_id(self, job_id):
-        re self.__pattern.sub('_', job_id)
+        return self.__pattern.sub('_', job_id)
 
     def list_clusters(self):
         """List all clusters"""
