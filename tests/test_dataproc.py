@@ -222,7 +222,7 @@ class TestDataproc(unittest.TestCase):
                     'mainPythonFileUri': 'gs://BUCKET/path/to/main.py',
                     'args': ['arg1', 'arg2']
                 },
-                'reference': {'jobId': 'pyspark_main_1994_04_27_12_00_01'}
+                'reference': {'jobId': 'pyspark_main_py_1994_04_27_12_00_01'}
             }
         }
         self.assertDictEqual(body_request_expected, result)

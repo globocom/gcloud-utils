@@ -6,8 +6,8 @@ import time
 import logging
 import datetime
 import os
+import re
 from googleapiclient import discovery
-
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
@@ -20,6 +20,11 @@ class Dataproc(object):
         self.__region = region
         self.__logger = logging.getLogger(name=self.__class__.__name__)
         self.__client = discovery.build('dataproc', 'v1', http=http)
+
+        self.__pattern = re.compile('[\W_]+')
+
+    def __format_job_id(self, job_id):
+        re self.__pattern.sub('_', job_id)
 
     def list_clusters(self):
         """List all clusters"""
@@ -63,8 +68,8 @@ class Dataproc(object):
                        image_version='1.2.54-deb8', disk_size_in_gb=10):
         if workers_names is None:
             workers_names = ["worker" + str(i) for i in range(1, workers+1)]
+        """Create a cluster"""
 
-        "Create a cluster"
         data_to_create = {
             "projectId": self.__project,
             "clusterName": name,
@@ -153,7 +158,8 @@ class Dataproc(object):
         datetime_now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
         main_python_file = os.path.join(gs_root, main_pyspark_file)
-        job_id = "pyspark_{}_{}".format(os.path.basename(main_pyspark_file).replace(".py",""), datetime_now).replace(".","_")
+        job_id = "pyspark_{}_{}".format(os.path.basename(main_pyspark_file), datetime_now)
+        job_id_formated = self.__format_job_id(job_id)
         gs_python_files = [os.path.join(gs_root, python_file) for python_file in python_files]
 
         submit_dict = {"pysparkJob": {
@@ -168,7 +174,7 @@ class Dataproc(object):
         if properties:
             submit_dict["pysparkJob"].update({"properties":properties})
 
-        return self.__submit_job(job_id, cluster_name, submit_dict)
+        return self.__submit_job(job_id_formated, cluster_name, submit_dict)
 
     def submit_spark_job(self, cluster_name, gs_bucket, list_args,
                          jar_paths, main_class, properties=None):
@@ -178,7 +184,8 @@ class Dataproc(object):
         datetime_now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
         jar_files = [os.path.join(gs_root, x) for x in jar_paths]
-        main_class_formatted = main_class.replace('.', '_')
+        main_class_formatted = self.__format_job_id(main_class)
+
         job_id = "spark_{}_{}".format(main_class_formatted, datetime_now)
         submit_dict = {"sparkJob": {
             "args": list_args,
