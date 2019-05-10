@@ -4,7 +4,7 @@ ROOT_PATH=$(shell pwd)
 
 install:
 	@pip install -r requirements.txt
-	@pip install -r requirements_test.txt
+	@pip install -r requirements_dev.txt
 
 clean:
 	-@rm -rf $(ROOT_PATH)/*.egg-info
@@ -23,7 +23,9 @@ endif
 	@git push --tags
 	@git push origin HEAD
 	@echo "Pushing lib"
-	@python setup.py sdist upload -r pypi
+	@python setup.py sdist
+	@twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
+	
 
 test:
 	@pytest
