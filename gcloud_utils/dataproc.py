@@ -6,8 +6,8 @@ import time
 import logging
 import datetime
 import os
+import re
 from googleapiclient import discovery
-
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
@@ -20,6 +20,11 @@ class Dataproc(object):
         self.__region = region
         self.__logger = logging.getLogger(name=self.__class__.__name__)
         self.__client = discovery.build('dataproc', 'v1', http=http)
+
+        self.__pattern = re.compile('[\W_]+')
+
+    def __format_job_id(self, job_id):
+        return self.__pattern.sub('_', job_id)
 
     def list_clusters(self):
         """List all clusters"""
@@ -63,8 +68,8 @@ class Dataproc(object):
                        image_version='1.2.54-deb8', disk_size_in_gb=10):
         if workers_names is None:
             workers_names = ["worker" + str(i) for i in range(1, workers+1)]
+        """Create a cluster"""
 
-        "Create a cluster"
         data_to_create = {
             "projectId": self.__project,
             "clusterName": name,
@@ -122,46 +127,76 @@ class Dataproc(object):
 
         return result
 
-    def submit_job(self, cluster_name, gs_bucket, jar_paths, main_class, list_args,
-                   properties=None):
-        """Submits the Spark job to the cluster, assuming jars at `jar_paths` list has
-        already been uploaded to `gs_bucket`"""
-
-        gs_root = "gs://{}/".format(gs_bucket)
-        jar_files = [os.path.join(gs_root, x) for x in jar_paths]
-
-        datetime_now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        main_class_formatted = main_class.replace('.', '_')
-        job_id = "{}_{}".format(main_class_formatted, datetime_now)
-
+    def __submit_job(self, job_id, cluster_name, submit_dict):
         job_details = {
-            'projectId': self.__project,
-            'job': {
-                'placement': {
-                    'clusterName': cluster_name
+            "projectId": self.__project,
+            "job": {
+                "placement": {
+                    "clusterName": cluster_name
                 },
-                'reference': {
-                    'jobId': job_id
-                },
-                'sparkJob': {
-                    'args': list_args,
-                    'mainClass': main_class,
-                    'jarFileUris': jar_files
+                "reference": {
+                    "jobId": job_id
                 }
             }
         }
-        if properties is not None:
-            job_details['job']['sparkJob']['properties'] = properties
-
+        job_details["job"].update(submit_dict)
         result = self.__client.projects().regions().jobs().submit(
             projectId=self.__project,
             region=self.__region,
             body=job_details).execute()
-
-        self.__logger.info('Submitted job ID %s', job_id)
+        self.__logger.info("Submitted job ID %s", job_id)
 
         self.__wait_job_finish(job_id)
         return result
+
+    def submit_pyspark_job(self, cluster_name, gs_bucket, list_args,
+                           main_pyspark_file, python_files, archive_uris=None, properties=None):
+        """Submit the pyspark job to cluster, assuming py files at `python_files` list has
+        already been uploaded to `gs_bucket """
+
+        gs_root = "gs://{}/".format(gs_bucket)
+        datetime_now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+
+        main_python_file = os.path.join(gs_root, main_pyspark_file)
+        job_id = "pyspark_{}_{}".format(os.path.basename(main_pyspark_file), datetime_now)
+        job_id_formated = self.__format_job_id(job_id)
+        gs_python_files = [os.path.join(gs_root, python_file) for python_file in python_files]
+
+        submit_dict = {"pysparkJob": {
+            "mainPythonFileUri": main_python_file,
+            "args": list_args,
+            "pythonFileUris": gs_python_files
+            }
+                      }
+        if archive_uris:
+            submit_dict["pysparkJob"].update({"archiveUris":archive_uris})
+
+        if properties:
+            submit_dict["pysparkJob"].update({"properties":properties})
+
+        return self.__submit_job(job_id_formated, cluster_name, submit_dict)
+
+    def submit_spark_job(self, cluster_name, gs_bucket, list_args,
+                         jar_paths, main_class, properties=None):
+        """Submits the Spark job to the cluster, assuming jars at `jar_paths` list has
+        already been uploaded to `gs_bucket`"""
+        gs_root = "gs://{}/".format(gs_bucket)
+        datetime_now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+
+        jar_files = [os.path.join(gs_root, x) for x in jar_paths]
+        main_class_formatted = self.__format_job_id(main_class)
+
+        job_id = "spark_{}_{}".format(main_class_formatted, datetime_now)
+        submit_dict = {"sparkJob": {
+            "args": list_args,
+            "mainClass": main_class,
+            "jarFileUris": jar_files
+        }
+                      }
+
+        if properties:
+            submit_dict["sparkJob"]["properties"] = properties
+        return self.__submit_job(job_id, cluster_name, submit_dict)
 
     def __wait_job_finish(self, job_id, sleep_time=5):
         request = self.__client.projects().regions().jobs().get(

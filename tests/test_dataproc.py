@@ -91,7 +91,7 @@ class TestDataproc(unittest.TestCase):
         self.assertEqual(result['content-length'],'0')
 
     @freeze_time('1994-04-27 12:00:01')
-    def test_submit_job_successfully(self):
+    def test_submit_job_spark_successfully(self):
         http_mocked = HttpMockSequence([
             ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
             ({'status': '200'}, 'echo_request_body'),
@@ -101,12 +101,13 @@ class TestDataproc(unittest.TestCase):
         ])
 
         dataproc_test = dataproc.Dataproc(project='project', region='region', http=http_mocked)
-        result = dataproc_test.submit_job(
+        self.maxDiff = None
+        result = dataproc_test.submit_spark_job(
             'CLUSTER',
             'BUCKET',
-            ['/path/to/jar/jarname.jar'],
-            'main',
-            ['arg1', 'arg2']
+            ['arg1', 'arg2'],
+            jar_paths=['/path/to/jar/jarname.jar'],
+            main_class='main'
         )
 
         body_request_expected = {
@@ -118,14 +119,15 @@ class TestDataproc(unittest.TestCase):
                     'mainClass': 'main',
                     'args': ['arg1', 'arg2']
                 },
-                'reference': {'jobId': 'main_1994_04_27_12_00_01'}
+                'reference': {'jobId': 'spark_main_1994_04_27_12_00_01'}
             }
         }
 
-        self.assertEqual(body_request_expected, result)
+        self.assertDictEqual(body_request_expected, result)
 
     @freeze_time('1994-04-27 12:00:01')
-    def test_submit_job_with_properties_successfully(self):
+    def test_submit_job_spark_with_properties_successfully(self):
+        self.maxDiff = None
         http_mocked = HttpMockSequence([
             ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
             ({'status': '200'}, 'echo_request_body'),
@@ -135,13 +137,13 @@ class TestDataproc(unittest.TestCase):
         ])
 
         dataproc_test = dataproc.Dataproc(project='project', region='region', http=http_mocked)
-        result = dataproc_test.submit_job(
+        result = dataproc_test.submit_spark_job(
             'CLUSTER',
             'BUCKET',
+            ['arg1', 'arg2'],
             ['/path/to/jar/jarname.jar'],
             'main',
-            ['arg1', 'arg2'],
-            {'a_property': 'a_property_value'}
+            properties={'a_property': 'a_property_value'}
         )
 
         body_request_expected = {
@@ -156,14 +158,13 @@ class TestDataproc(unittest.TestCase):
                         'a_property': 'a_property_value'
                     }
                 },
-                'reference': {'jobId': 'main_1994_04_27_12_00_01'}
+                'reference': {'jobId': 'spark_main_1994_04_27_12_00_01'}
             }
         }
-
-        self.assertEqual(body_request_expected, result)
+        self.assertDictEqual(body_request_expected, result)
 
     @freeze_time('1994-04-27 12:00:01')
-    def test_submit_job_error(self):
+    def test_submit_spark_job_error(self):
         http_mocked = HttpMockSequence([
             ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
             ({'status': '200'}, 'echo_request_body'),
@@ -175,4 +176,54 @@ class TestDataproc(unittest.TestCase):
         dataproc_test = dataproc.Dataproc(project='project', region='region', http=http_mocked)
 
         with self.assertRaises(Exception):
-            dataproc_test.submit_job("", "", [""], "", [])
+            dataproc_test.submit_spark_job("", "", [""], "", [])
+
+    @freeze_time('1994-04-27 12:00:01')
+    def test_submit_pyspark_job_error(self):
+        http_mocked = HttpMockSequence([
+            ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
+            ({'status': '200'}, 'echo_request_body'),
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_running.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_error.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_done.json', 'rb').read())
+        ])
+
+        dataproc_test = dataproc.Dataproc(project='project', region='region', http=http_mocked)
+
+        with self.assertRaises(Exception):
+            dataproc_test.submit_pyspark_job("", "", [""], "", [])
+
+    @freeze_time('1994-04-27 12:00:01')
+    def test_submit_job_pyspark_with_properties_successfully(self):
+        self.maxDiff = None
+        http_mocked = HttpMockSequence([
+            ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
+            ({'status': '200'}, 'echo_request_body'),
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_running.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_running.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/dataproc/job_status_done.json', 'rb').read())
+        ])
+
+        dataproc_test = dataproc.Dataproc(project='project', region='region', http=http_mocked)
+        result = dataproc_test.submit_pyspark_job(
+            'CLUSTER',
+            'BUCKET',
+            ['arg1', 'arg2'],
+            'path/to/main.py',
+            ['/path/to/py/file_one.py', '/path/to/py/file_two.py']
+        )
+
+        body_request_expected = {
+            'projectId': 'project',
+            'job': {
+                'placement': {'clusterName': 'CLUSTER'},
+                'pysparkJob': {
+                    'pythonFileUris': ['/path/to/py/file_one.py', '/path/to/py/file_two.py'],
+                    'mainPythonFileUri': 'gs://BUCKET/path/to/main.py',
+                    'args': ['arg1', 'arg2']
+                },
+                'reference': {'jobId': 'pyspark_main_py_1994_04_27_12_00_01'}
+            }
+        }
+        self.assertDictEqual(body_request_expected, result)
+
