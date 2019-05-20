@@ -65,7 +65,9 @@ class Dataproc(object):
         return not midle_state
 
     def create_cluster(self, name, workers, workers_names=None,
-                       image_version='1.2.54-deb8', disk_size_in_gb=10):
+                       image_version='1.2.54-deb8', disk_size_in_gb=10,
+                       metadata=None,
+                       initializationActions=None):
         if workers_names is None:
             workers_names = ["worker" + str(i) for i in range(1, workers+1)]
         """Create a cluster"""
@@ -104,6 +106,12 @@ class Dataproc(object):
                 },
             }
         }
+
+        if metadata:
+            data_to_create['config']['gceClusterConfig'].update({"metadata":metadata})
+
+        if initializationActions:
+            data_to_create['config'].update({"initializationActions": initializationActions})
 
         result = self.__client.projects()\
             .regions()\
