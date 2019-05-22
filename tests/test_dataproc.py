@@ -80,6 +80,96 @@ class TestDataproc(unittest.TestCase):
         }
         self.assertEqual(result,expected)
 
+        def test_create_cluster_with_metadata(self):
+            http_mocked = HttpMockSequence([
+                ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
+                ({'status': '200'}, 'echo_request_body'),
+                ({'status': '200'}, open('tests/fixtures/dataproc/cluster_not_done.json', 'rb').read()),
+                ({'status': '200'}, open('tests/fixtures/dataproc/cluster_not_done.json', 'rb').read()),
+                ({'status': '200'}, open('tests/fixtures/dataproc/cluster_done.json', 'rb').read())
+            ])
+            dataproc_test = dataproc.Dataproc(project="project", region="region", http=http_mocked)
+            result = dataproc_test.create_cluster("NAME", 2, ["B1", "B2"], metadata={'PIP_PACKAGES': 'pandas==0.23.0 scipy==1.1.0'})
+            expected = {
+                'clusterName': 'NAME',
+                'projectId': 'project',
+                'config': {
+                    'workerConfig': {
+                        'machineTypeUri': 'n1-standard-4',
+                        'numInstances': 2,
+                        'instanceNames': ['B1', 'B2'],
+                        'diskConfig': {
+                            'numLocalSsds': 0,
+                            'bootDiskSizeGb': 10
+                        }
+                    },
+                    'masterConfig': {
+                        'machineTypeUri': 'n1-standard-4',
+                        'numInstances': 1,
+                        'instanceNames': ['cluster-yarn-recsys-m'],
+                        'diskConfig': {
+                            'numLocalSsds': 0,
+                            'bootDiskSizeGb': 10
+                        }
+                    },
+                    'gceClusterConfig': {
+                        'subnetworkUri': 'default',
+                        'zoneUri': 'region-b',
+                        'metadata': {'PIP_PACKAGES': 'pandas==0.23.0 scipy==1.1.0'}
+                    },
+                    'configBucket': '',
+                    'softwareConfig': {
+                        'imageVersion': '1.2.54-deb8'
+                    },
+                },
+            }
+            self.assertEqual(result,expected)
+
+        def test_create_cluster_with_executableFile(self):
+            http_mocked = HttpMockSequence([
+                ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
+                ({'status': '200'}, 'echo_request_body'),
+                ({'status': '200'}, open('tests/fixtures/dataproc/cluster_not_done.json', 'rb').read()),
+                ({'status': '200'}, open('tests/fixtures/dataproc/cluster_not_done.json', 'rb').read()),
+                ({'status': '200'}, open('tests/fixtures/dataproc/cluster_done.json', 'rb').read())
+            ])
+            dataproc_test = dataproc.Dataproc(project="project", region="region", http=http_mocked)
+            result = dataproc_test.create_cluster("NAME", 2, ["B1", "B2"], initialization_actions={'initializationActions': [{'executableFile': 'fakePath'}]})
+            expected = {
+                'clusterName': 'NAME',
+                'projectId': 'project',
+                'config': {
+                    'workerConfig': {
+                        'machineTypeUri': 'n1-standard-4',
+                        'numInstances': 2,
+                        'instanceNames': ['B1', 'B2'],
+                        'diskConfig': {
+                            'numLocalSsds': 0,
+                            'bootDiskSizeGb': 10
+                        }
+                    },
+                    'masterConfig': {
+                        'machineTypeUri': 'n1-standard-4',
+                        'numInstances': 1,
+                        'instanceNames': ['cluster-yarn-recsys-m'],
+                        'diskConfig': {
+                            'numLocalSsds': 0,
+                            'bootDiskSizeGb': 10
+                        }
+                    },
+                    'gceClusterConfig': {
+                        'subnetworkUri': 'default',
+                        'zoneUri': 'region-b'
+                    },
+                    'configBucket': '',
+                    'softwareConfig': {
+                        'imageVersion': '1.2.54-deb8'
+                    },
+                    'initializationActions': [{'executableFile': 'fakePath'}]
+                },
+            }
+            self.assertEqual(result,expected)
+
     def test_delete_cluster(self):
         http_mocked = HttpMockSequence([
             ({'status': '200'}, open('tests/fixtures/dataproc/first_request.json', 'rb').read()),
