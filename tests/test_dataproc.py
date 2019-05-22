@@ -134,7 +134,7 @@ class TestDataproc(unittest.TestCase):
                 ({'status': '200'}, open('tests/fixtures/dataproc/cluster_done.json', 'rb').read())
             ])
             dataproc_test = dataproc.Dataproc(project="project", region="region", http=http_mocked)
-            result = dataproc_test.create_cluster("NAME", 2, ["B1", "B2"], initializationActions={'initializationActions': [{'executableFile': 'fakePath'}]})
+            result = dataproc_test.create_cluster("NAME", 2, ["B1", "B2"], initialization_actions={'initializationActions': [{'executableFile': 'fakePath'}]})
             expected = {
                 'clusterName': 'NAME',
                 'projectId': 'project',
