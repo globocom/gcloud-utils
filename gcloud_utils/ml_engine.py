@@ -1,5 +1,6 @@
 """Submit Job to ML Engine"""
 from googleapiclient import discovery
+from oauth2client.client import GoogleCredentials
 import datetime
 import logging
 import re
@@ -15,7 +16,7 @@ class MlEngine(object):
     """Google-ml-engine handler"""
     def __init__(self, project, bucket_name,
                  region, package_path=PACKAGE_PATH,
-                 job_dir=JOB_DIR, http=None):
+                 job_dir=JOB_DIR, http=None, credentials_path=None):
 
         self.project = project
         self.parent = "projects/{}".format(self.project)
@@ -24,7 +25,10 @@ class MlEngine(object):
         self.package_full_path = "gs://{}/{}".format(self.bucket_name, package_path)
         self.job_dir_suffix = "gs://{}/{}".format(self.bucket_name, job_dir)
         self.__logger = logging.getLogger(name=self.__class__.__name__)
-        self.client = discovery.build('ml', 'v1', http=http)
+
+        credentials = None if not credentials_path else GoogleCredentials.from_stream(credentials_path)
+
+        self.client = discovery.build('ml', 'v1', http=http, credentials=credentials)
 
     def __get_model_versions_with_metadata(self, model_name):
         parent_model = self.__parent_model_name(model_name)
