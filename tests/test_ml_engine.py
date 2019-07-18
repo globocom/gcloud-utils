@@ -36,11 +36,7 @@ class TestMlEngine(unittest.TestCase):
 
         self.assertDictEqual(
             json.loads(post_to_create_model.body),
-            {
-                "deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export",
-                "name": "v4_5",
-                "pythonVersion": "2.7"
-            }
+            {"deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export", "name": "v4_5"}
         )
         self.assertEqual(new_version, "v4_5")
 
@@ -57,11 +53,7 @@ class TestMlEngine(unittest.TestCase):
 
         self.assertDictEqual(
             json.loads(post_to_create_model.body),
-            {
-                "deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export",
-                "name": "v5_0",
-                "pythonVersion": "2.7"
-            }
+            {"deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export", "name": "v5_0"}
         )
         self.assertEqual(new_version,"v5_0")
 
@@ -78,11 +70,7 @@ class TestMlEngine(unittest.TestCase):
 
         self.assertEqual(
             json.loads(post_to_create_model.body),
-            {
-                "deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export",
-                "name": "v0_1",
-                "pythonVersion": "2.7"
-            }
+            {"deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export", "name": "v0_1"}
         )
         self.assertEqual(new_version, "v0_1")
 
