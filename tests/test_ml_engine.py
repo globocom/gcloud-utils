@@ -72,7 +72,29 @@ class TestMlEngine(unittest.TestCase):
             json.loads(post_to_create_model.body),
             {"deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export", "name": "v0_1"}
         )
-        self.assertEqual(new_version,"v0_1")
+        self.assertEqual(new_version, "v0_1")
+
+    def test_create_new_model_version_empty_with_python_runtime_and_framework(self):
+        """Test the creation of new model version with specific python version, runtime and framework"""
+        http = HttpMockSequence([
+            ({'status': '200'}, open('tests/fixtures/ml_engine/first_result.json', 'rb').read()),
+            ({'status': '200'}, open('tests/fixtures/ml_engine/versions_models_empty.json', 'rb').read())
+        ])
+        ml_engine_test = ml_engine.MlEngine("PROJECT", "BUCKET_NAME", "REGION", http=http)
+
+        (post_to_create_model, new_version) = ml_engine_test.increase_model_version("MODEL", "JOB_ID", "3.5", "1.14", "TENSORFLOW")
+
+        self.assertEqual(
+            json.loads(post_to_create_model.body),
+            {
+                "deploymentUri": "gs://BUCKET_NAME/jobs/JOB_ID/export",
+                "name": "v0_1",
+                "pythonVersion": "3.5",
+                "runtimeVersion": "1.14",
+                "framework": "TENSORFLOW"
+            }
+        )
+        self.assertEqual(new_version, "v0_1")
 
     def test_set_model_version_as_default(self):
         """"Test method that set version as default"""
