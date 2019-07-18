@@ -97,13 +97,20 @@ class MlEngine(object):
         request = self.client.projects().models().create(parent=self.parent, body=request_dict)
         return request
 
-    def create_model_version(self, model_name, version, job_id):
+    def create_model_version(self, model_name, version, job_id, python_version="2.7", runtime_version="", framework=""):
         """Increase Model version"""
         parent_model = self.__parent_model_name(model_name)
         body_request = {
             "name": version,
-            "deploymentUri": "{}/{}/export".format(self.job_dir_suffix, job_id)
-            }
+            "deploymentUri": "{}/{}/export".format(self.job_dir_suffix, job_id),
+            "pythonVersion": python_version
+        }
+
+        if runtime_version:
+            body_request["runtimeVersion"] = runtime_version
+
+        if framework:
+            body_request["framework"] = framework
 
         request = self.client\
          .projects()\
@@ -142,14 +149,14 @@ class MlEngine(object):
         for version in remove_versions:
             self.delete_model_version(model_name, version)
 
-    def increase_model_version(self, model_name, job_id):
+    def increase_model_version(self, model_name, job_id, python_version="2.7", runtime_version="", framework=""):
         """Increase Model version"""
 
         versions = self.get_model_versions(model_name)
         last_version = self.__get_last_version(versions)
         new_version = self.__increase_version(last_version)
 
-        request = self.create_model_version(model_name, new_version,job_id)
+        request = self.create_model_version(model_name, new_version, job_id, python_version, runtime_version, framework)
 
         return (request, new_version)
 
