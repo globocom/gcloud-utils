@@ -9,7 +9,7 @@ This package already supports [Google Cloud Platform](https://cloud.google.com/)
 ## Install
 
 ```
-pip install gcloud_utils
+pip install gcloud-utils
 ```
 
 ## Contribute
