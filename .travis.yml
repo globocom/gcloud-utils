@@ -9,4 +9,4 @@ install:
   - make install
 # command to run tests
 script:
-  - make test
+  - make ci

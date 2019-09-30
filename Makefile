@@ -1,4 +1,4 @@
-.PHONY: install clean test coverage lint sonar
+.PHONY: install clean test coverage lint ci
 
 ROOT_PATH=$(shell pwd)
 
@@ -25,7 +25,6 @@ endif
 	@echo "Pushing lib"
 	@python setup.py sdist
 	@twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
-	
 
 test:
 	@pytest
@@ -38,5 +37,4 @@ coverage:
 lint:
 	@pylint ./gcloud_utils/
 
-sonar: coverage
-	sonar-scanner
+ci: coverage lint
