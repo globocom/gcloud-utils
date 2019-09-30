@@ -20,7 +20,7 @@ Indices and tables
 Quick Start
 ===========
 
-To install de package you must run 
+To install the package you must run 
 
 .. code-block:: console
    :linenos:
