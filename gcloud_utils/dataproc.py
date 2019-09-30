@@ -21,7 +21,7 @@ class Dataproc(object):
         self.__logger = logging.getLogger(name=self.__class__.__name__)
         self.__client = discovery.build('dataproc', 'v1', http=http)
 
-        self.__pattern = re.compile('[\W_]+')
+        self.__pattern = re.compile(r'[\W_]+')
 
     def __format_job_id(self, job_id):
         return self.__pattern.sub('_', job_id)
@@ -70,8 +70,8 @@ class Dataproc(object):
                        initialization_actions=None):
         if workers_names is None:
             workers_names = ["worker" + str(i) for i in range(1, workers+1)]
-        """Create a cluster"""
 
+        # Create a cluster
         data_to_create = {
             "projectId": self.__project,
             "clusterName": name,

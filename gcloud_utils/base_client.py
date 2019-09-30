@@ -25,4 +25,3 @@ class BaseClient(object):
                 "Need a client or {} environment of your credentials"
                 .format(self.CREDENTIAL_ENV)
                 )
- 

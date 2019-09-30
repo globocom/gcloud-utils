@@ -1,10 +1,12 @@
 """Module to handle Google BigQuery Service"""
 
 import logging
+
 from google.cloud import bigquery
+from google.api_core.exceptions import NotFound
 from gcloud_utils.bigquery.query_builder import QueryBuilder
 from gcloud_utils.base_client import BaseClient
-from google.api_core.exceptions import NotFound
+
 
 class Bigquery(BaseClient):
     """Google-Bigquery handler"""
@@ -52,7 +54,8 @@ class Bigquery(BaseClient):
         return self.query(query_or_object, job_config=job_config, **kwargs)
 
     def _complete_filename(self, filename, export_format, compression_format):
-        if self.COMPRESSION_FORMATS.get(compression_format) and self.FILE_FORMATS.get(export_format):
+        if (self.COMPRESSION_FORMATS.get(compression_format) and
+                self.FILE_FORMATS.get(export_format)):
             complete_filename = "{}_*.{}".format(filename, export_format)
             if compression_format:
                 complete_filename = "{}.{}".format(complete_filename, compression_format)
@@ -96,7 +99,7 @@ class Bigquery(BaseClient):
         """Create a table based on dataset"""
         try:
             self.create_dataset(dataset_id)
-        except:
+        except Exception:
             pass
 
         dataset_ref = self._client.dataset(dataset_id)
@@ -108,10 +111,7 @@ class Bigquery(BaseClient):
                                dataset_id, table_id, job_config=None,
                                import_format="csv", location="US", **kwargs):
         """Extract table from GoogleStorage and send to BigQuery"""
-        try:
-            self.create_table(dataset_id, table_id)
-        except:
-            pass
+        self.create_table(dataset_id, table_id)
 
         dataset_ref = self._client.dataset(dataset_id)
         table_ref = dataset_ref.table(table_id)
