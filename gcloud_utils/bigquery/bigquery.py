@@ -1,10 +1,13 @@
+#pylint: disable=too-many-arguments,bare-except
+
 """Module to handle Google BigQuery Service"""
 
 import logging
 from google.cloud import bigquery
+from google.api_core.exceptions import NotFound
 from gcloud_utils.bigquery.query_builder import QueryBuilder
 from gcloud_utils.base_client import BaseClient
-from google.api_core.exceptions import NotFound
+
 
 class Bigquery(BaseClient):
     """Google-Bigquery handler"""
@@ -52,33 +55,37 @@ class Bigquery(BaseClient):
         return self.query(query_or_object, job_config=job_config, **kwargs)
 
     def _complete_filename(self, filename, export_format, compression_format):
-        if self.COMPRESSION_FORMATS.get(compression_format) and self.FILE_FORMATS.get(export_format):
+        if self.COMPRESSION_FORMATS.get(compression_format)\
+            and self.FILE_FORMATS.get(export_format):
             complete_filename = "{}_*.{}".format(filename, export_format)
             if compression_format:
-                complete_filename = "{}.{}".format(complete_filename, compression_format)
+                complete_filename = "{}.{}".format(
+                    complete_filename, compression_format)
             return complete_filename
-        else:
-            raise Exception(
-                "Only valid file formats: {}. Only valid compression formats: {}"
-                .format(
-                    ",".join(self.FILE_FORMATS.keys()),
-                    ",".join(self.COMPRESSION_FORMATS.keys())
-                    )
+
+        raise Exception(
+            "Only valid file formats: {}. Only valid compression formats: {}"
+            .format(
+                ",".join(self.FILE_FORMATS.keys()),
+                ",".join(self.COMPRESSION_FORMATS.keys())
             )
+        )
 
     def table_to_cloud_storage(self, dataset_id, table_id,
                                bucket_name, filename, job_config=None,
                                export_format="csv", compression_format="gz", location="US",
                                **kwargs):
         """Extract a table from BigQuery and send to GoogleStorage"""
-        complete_filename = self._complete_filename(filename, export_format, compression_format)
+        complete_filename = self._complete_filename(
+            filename, export_format, compression_format)
 
         destination_uri = "gs://{}/{}".format(bucket_name, complete_filename)
         table = self._client.dataset(dataset_id).table(table_id)
 
         job_config = job_config if job_config else bigquery.ExtractJobConfig()
 
-        job_config.compression = self.COMPRESSION_FORMATS.get(compression_format)
+        job_config.compression = self.COMPRESSION_FORMATS.get(
+            compression_format)
         job_config.destination_format = self.FILE_FORMATS.get(export_format)
 
         return self._client.extract_table(

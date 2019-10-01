@@ -1,10 +1,12 @@
+#pylint: disable=no-member,too-many-instance-attributes,no-self-use,too-many-arguments,too-many-locals,dangerous-default-value,useless-object-inheritance
+
 """Submit Job to ML Engine"""
-from googleapiclient import discovery
-from oauth2client.client import GoogleCredentials
 import datetime
 import logging
 import re
 import time
+from googleapiclient import discovery
+from oauth2client.client import GoogleCredentials
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
@@ -12,8 +14,10 @@ logging.basicConfig(level=logging.INFO,
 PACKAGE_PATH = "packages"
 JOB_DIR = "jobs"
 
+
 class MlEngine(object):
     """Google-ml-engine handler"""
+
     def __init__(self, project, bucket_name,
                  region, package_path=PACKAGE_PATH,
                  job_dir=JOB_DIR, http=None, credentials_path=None):
@@ -22,32 +26,37 @@ class MlEngine(object):
         self.parent = "projects/{}".format(self.project)
         self.bucket_name = bucket_name
         self.region = region
-        self.package_full_path = "gs://{}/{}".format(self.bucket_name, package_path)
+        self.package_full_path = "gs://{}/{}".format(
+            self.bucket_name, package_path)
         self.job_dir_suffix = "gs://{}/{}".format(self.bucket_name, job_dir)
         self.__logger = logging.getLogger(name=self.__class__.__name__)
 
-        credentials = None if not credentials_path else GoogleCredentials.from_stream(credentials_path)
+        credentials = None if not credentials_path else GoogleCredentials.from_stream(
+            credentials_path)
 
-        self.client = discovery.build('ml', 'v1', http=http, credentials=credentials)
+        self.client = discovery.build(
+            'ml', 'v1', http=http, credentials=credentials)
 
     def __get_model_versions_with_metadata(self, model_name):
         parent_model = self.__parent_model_name(model_name)
         request = self.client\
-        .projects()\
-        .models()\
-        .versions()
+            .projects()\
+            .models()\
+            .versions()
 
         version_list = request.list(parent=parent_model).execute()
 
         result = []
         try:
             result = version_list['versions']
-        except KeyError as e:
-            self.__logger.error("Error on get version: %s\nVersions list is empty", e)
+        except KeyError as error:
+            self.__logger.error(
+                "Error on get version: %s\nVersions list is empty", error)
 
         while 'nextPageToken' in version_list:
             token = version_list['nextPageToken']
-            version_list = request.list(parent=parent_model, pageToken=token).execute()
+            version_list = request.list(
+                parent=parent_model, pageToken=token).execute()
             page_result = version_list['versions']
             result.extend(page_result)
 
@@ -61,7 +70,8 @@ class MlEngine(object):
         return ["v0_0"]
 
     def __get_last_version(self, versions):
-        versions_float = [float(version[1:].replace("_", ".")) for version in versions]
+        versions_float = [float(version[1:].replace("_", "."))
+                          for version in versions]
         last_version = str(max(versions_float))
         return "v{}".format(last_version.replace(".", "_"))
 
@@ -72,7 +82,7 @@ class MlEngine(object):
             raise ValueError(
                 'Parameter "version" value "{}" does not match the pattern "{}"'
                 .format(version, pattern)
-                )
+            )
 
         float_value = float(version[1:].replace("_", "."))
         new_version = str(float_value + 0.1)
@@ -93,11 +103,13 @@ class MlEngine(object):
         request_dict = {
             'name': name,
             'description': description
-            }
-        request = self.client.projects().models().create(parent=self.parent, body=request_dict)
+        }
+        request = self.client.projects().models().create(
+            parent=self.parent, body=request_dict)
         return request
 
-    def create_model_version(self, model_name, version, job_id, python_version="", runtime_version="", framework=""):
+    def create_model_version(self, model_name, version, job_id, python_version="",
+                             runtime_version="", framework=""):
         """Increase Model version"""
         parent_model = self.__parent_model_name(model_name)
         body_request = {
@@ -106,7 +118,7 @@ class MlEngine(object):
         }
 
         if python_version:
-            body_request["pythonVersion"]= python_version
+            body_request["pythonVersion"] = python_version
 
         if runtime_version:
             body_request["runtimeVersion"] = runtime_version
@@ -115,62 +127,66 @@ class MlEngine(object):
             body_request["framework"] = framework
 
         request = self.client\
-         .projects()\
-         .models()\
-         .versions()\
-         .create(body=body_request, parent=parent_model)
+            .projects()\
+            .models()\
+            .versions()\
+            .create(body=body_request, parent=parent_model)
 
         return request
 
     def delete_model_version(self, model_name, version):
         """Delete Model version"""
-        self.__logger.info("Deleting version %s of model %s", version, model_name)
+        self.__logger.info("Deleting version %s of model %s",
+                           version, model_name)
 
-        name = "{}/versions/{}".format(self.__parent_model_name(model_name), version)
+        name = "{}/versions/{}".format(
+            self.__parent_model_name(model_name), version)
         request = self.client \
-         .projects() \
-         .models() \
-         .versions() \
-         .delete(name=name) \
-         .execute()
+            .projects() \
+            .models() \
+            .versions() \
+            .delete(name=name) \
+            .execute()
 
         return request
 
     def delete_older_model_versions(self, model_name, n_versions_to_keep):
         """Keep the most recents model versions and delete older ones.
         The number of models to keep is specified by the parameter n_versions_to_keep"""
-        def get_use_time(version):
+        def _get_use_time(version):
             use_time = version.get('lastUseTime') or version.get('createTime')
             return time.strptime(use_time, "%Y-%m-%dT%H:%M:%SZ")
 
         versions = self.__get_model_versions_with_metadata(model_name)
-        versions.sort(key=get_use_time, reverse=True)
+        versions.sort(key=_get_use_time, reverse=True)
         versions_name = [x['name'].split("/")[-1] for x in versions]
         remove_versions = versions_name[n_versions_to_keep:]
 
         for version in remove_versions:
             self.delete_model_version(model_name, version)
 
-    def increase_model_version(self, model_name, job_id, python_version="", runtime_version="", framework=""):
+    def increase_model_version(self, model_name, job_id, python_version="",
+                               runtime_version="", framework=""):
         """Increase Model version"""
 
         versions = self.get_model_versions(model_name)
         last_version = self.__get_last_version(versions)
         new_version = self.__increase_version(last_version)
 
-        request = self.create_model_version(model_name, new_version, job_id, python_version, runtime_version, framework)
+        request = self.create_model_version(
+            model_name, new_version, job_id, python_version, runtime_version, framework)
 
         return (request, new_version)
 
-
     def set_version_as_default(self, model, version):
         """Set a model version as default"""
-        version_full_path = "{}/models/{}/versions/{}".format(self.parent, model, version)
+        version_full_path = "{}/models/{}/versions/{}".format(
+            self.parent, model, version)
         request = self.client\
-         .projects()\
-         .models()\
-         .versions()\
-         .setDefault(body={}, name=version_full_path)
+            .projects()\
+            .models()\
+            .versions()\
+            .setDefault(body={}, name=version_full_path)
         return request
 
     def list_jobs(self, filter_final_state='SUCCEEDED'):
@@ -178,14 +194,15 @@ class MlEngine(object):
         jobs = self.client.projects().jobs().list(parent=self.parent).execute()
         list_of_jobs = jobs['jobs']
         if filter_final_state:
-            list_of_jobs = [x for x in list_of_jobs if x['state'] == filter_final_state]
+            list_of_jobs = [
+                x for x in list_of_jobs if x['state'] == filter_final_state]
         return [x['jobId'] for x in list_of_jobs]
 
     def list_models(self):
         """List all models in project"""
         request = self.client.projects().models()\
-        .list(parent=self.parent)\
-        .execute()
+            .list(parent=self.parent)\
+            .execute()
         return request
 
     def get_job(self, job_id):
@@ -210,10 +227,14 @@ class MlEngine(object):
         self.__logger.info("Job finished with status %s", state)
         return state
 
-    def start_training_job(self, job_id_prefix, package_name, module, extra_packages=[], runtime_version="1.0", python_version="", scale_tier="", master_type="", worker_type="", parameter_server_type="", worker_count="", parameter_server_count="",**args):
+    def start_training_job(self, job_id_prefix, package_name, module, extra_packages=[],
+                           runtime_version="1.0", python_version="", scale_tier="",
+                           master_type="", worker_type="", parameter_server_type="",
+                           worker_count="", parameter_server_count="", **args):
         """Start a training job"""
         main_package_uri = "{}/{}".format(self.package_full_path, package_name)
-        packages_uris = ["{}/{}".format(self.package_full_path, ep) for ep in extra_packages]
+        packages_uris = ["{}/{}".format(self.package_full_path, ep)
+                         for ep in extra_packages]
         packages_uris.append(main_package_uri)
 
         suffix_module = module.split(".")[-1]
@@ -228,8 +249,8 @@ class MlEngine(object):
         formated_args = self.__parse_start_training_args(args)
 
         body_request = {
-            "jobId" : job_id,
-            "trainingInput":{
+            "jobId": job_id,
+            "trainingInput": {
                 "packageUris": packages_uris,
                 "pythonModule": module,
                 "args": formated_args,
@@ -241,22 +262,22 @@ class MlEngine(object):
 
         if python_version:
             body_request["trainingInput"]["pythonVersion"] = python_version
-        
+
         if scale_tier:
             body_request["trainingInput"]["scaleTier"] = scale_tier
 
         if master_type:
             body_request["trainingInput"]["masterType"] = master_type
-        
+
         if worker_type:
             body_request["trainingInput"]["workerType"] = worker_type
-        
+
         if parameter_server_type:
             body_request["trainingInput"]["parameterServerType"] = parameter_server_type
-        
+
         if worker_count:
             body_request["trainingInput"]["workerCount"] = worker_count
-        
+
         if parameter_server_count:
             body_request["trainingInput"]["parameterServerCount"] = parameter_server_count
 
@@ -266,23 +287,24 @@ class MlEngine(object):
     def start_predict_job(self, job_id_prefix, model, input_path, output_path):
         """start a prediction job"""
         if not isinstance(input_path, list):
-            raise TypeError("input_path must be a list") 
+            raise TypeError("input_path must be a list")
 
         request = self.client.projects()
         model_full_path = "{}/models/{}".format(self.parent, model)
 
         date_formated = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-        job_id = "{}_{}_{}_prediction".format(job_id_prefix, model, date_formated)
+        job_id = "{}_{}_{}_prediction".format(
+            job_id_prefix, model, date_formated)
 
         body_request = {
-            "jobId":job_id,
-            "predictionInput":{
+            "jobId": job_id,
+            "predictionInput": {
                 "modelName": model_full_path,
                 "dataFormat": "JSON",
                 "inputPaths": input_path,
                 "outputPath": output_path,
                 "region": "us-east1"
-                }
+            }
         }
         job = request.jobs().create(parent=self.parent, body=body_request)
         return job

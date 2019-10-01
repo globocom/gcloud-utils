@@ -1,3 +1,5 @@
+#pylint: disable=no-member,useless-object-inheritance
+
 """Module to handle Google Compute Service"""
 import time
 import logging
@@ -18,14 +20,15 @@ class Compute(object):
         self.__update_instances(self.client)
 
     def __request_instances_info(self, client):
-        instances = client.instances().list(project=self.project, zone=self.zone).execute()
+        instances = client.instances().list(
+            project=self.project, zone=self.zone).execute()
         return instances[u'items']
 
     def __update_instances(self, client):
         intances_itens = self.__request_instances_info(client)
         result = {}
         for i in intances_itens:
-            result.update({i[u'name'] : i[u'status']})
+            result.update({i[u'name']: i[u'status']})
         self.intances = result
 
     def __check_status(self, instance_name, expected_status, max_time=400):
@@ -46,16 +49,19 @@ class Compute(object):
             self.logger.debug("%s status: %s", instance_name, status)
 
             if not status == expecte_status:
-                action(zone=self.zone, project=self.project, instance=instance_name).execute()
+                action(zone=self.zone, project=self.project,
+                       instance=instance_name).execute()
                 self.__check_status(instance_name, expecte_status)
 
         except KeyError:
-            raise Exception("Instence %s doesn't exists"%instance_name)
+            raise Exception("Instence %s doesn't exists" % instance_name)
 
     def start_instance(self, instance_name):
         """Start VM by name"""
-        self.__change_status(instance_name, self.client.instances().start, "RUNNING")
+        self.__change_status(
+            instance_name, self.client.instances().start, "RUNNING")
 
     def stop_instance(self, instance_name):
         """Stop VM by name"""
-        self.__change_status(instance_name, self.client.instances().stop, "TERMINATED")
+        self.__change_status(
+            instance_name, self.client.instances().stop, "TERMINATED")
