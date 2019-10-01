@@ -1,5 +1,3 @@
-#pylint: disable=useless-object-inheritance
-
 """Module to build query"""
 from string import Template
 

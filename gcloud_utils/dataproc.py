@@ -1,4 +1,4 @@
-#pylint: disable=no-member,too-many-arguments,too-many-locals,useless-object-inheritance
+#pylint: disable=no-member,too-many-arguments,too-many-locals
 
 """
 Module to handle with Dataproc cluster

@@ -1,4 +1,4 @@
-#pylint: disable=no-member,useless-object-inheritance
+#pylint: disable=no-member
 
 """Module to handle Google Compute Service"""
 import time

@@ -1,4 +1,4 @@
-#pylint: disable=no-member,too-many-instance-attributes,no-self-use,too-many-arguments,too-many-locals,dangerous-default-value,useless-object-inheritance
+#pylint: disable=no-member,too-many-instance-attributes,no-self-use,too-many-arguments,too-many-locals,dangerous-default-value
 
 """Submit Job to ML Engine"""
 import datetime
