@@ -1,10 +1,16 @@
 .PHONY: install clean test coverage lint ci
 
 ROOT_PATH=$(shell pwd)
+PYTHON_VERSION := $(word 2,$(subst ., ,$(shell python --version 2>&1)))
 
 install:
 	@pip install -r requirements.txt
 	@pip install -r requirements_dev.txt
+ifeq ($(PYTHON_VERSION),3)
+	@pip install -r requirements_dev_python3.txt
+else
+	@pip install -r requirements_dev_python2.txt
+endif
 
 clean:
 	-@rm -rf $(ROOT_PATH)/*.egg-info
