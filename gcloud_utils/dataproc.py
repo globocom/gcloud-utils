@@ -1,3 +1,5 @@
+#pylint: disable=no-member,too-many-arguments,too-many-locals
+
 """
 Module to handle with Dataproc cluster
 """
@@ -15,13 +17,14 @@ logging.basicConfig(level=logging.INFO,
 
 class Dataproc(object):
     """Module to handle with Dataproc cluster"""
+
     def __init__(self, project, region, http=None):
         self.__project = project
         self.__region = region
         self.__logger = logging.getLogger(name=self.__class__.__name__)
         self.__client = discovery.build('dataproc', 'v1', http=http)
 
-        self.__pattern = re.compile('[\W_]+')
+        self.__pattern = re.compile(r'[\W_]+')
 
     def __format_job_id(self, job_id):
         return self.__pattern.sub('_', job_id)
@@ -30,7 +33,8 @@ class Dataproc(object):
         """List all clusters"""
         request = self.__client.projects().regions().clusters()
 
-        result = request.list(projectId=self.__project, region=self.__region).execute()
+        result = request.list(projectId=self.__project,
+                              region=self.__region).execute()
         cluster_list = []
 
         if 'clusters' in result:
@@ -68,9 +72,9 @@ class Dataproc(object):
                        image_version='1.2.54-deb8', disk_size_in_gb=10,
                        metadata=None,
                        initialization_actions=None):
+        """Create a cluster"""
         if workers_names is None:
             workers_names = ["worker" + str(i) for i in range(1, workers+1)]
-        """Create a cluster"""
 
         data_to_create = {
             "projectId": self.__project,
@@ -80,7 +84,7 @@ class Dataproc(object):
                 "gceClusterConfig": {
                     "subnetworkUri": "default",
                     "zoneUri": "{}-b".format(self.__region)
-                    },
+                },
                 "masterConfig": {
                     "numInstances": 1,
                     "instanceNames": [
@@ -108,10 +112,12 @@ class Dataproc(object):
         }
 
         if metadata:
-            data_to_create['config']['gceClusterConfig'].update({"metadata":metadata})
+            data_to_create['config']['gceClusterConfig'].update(
+                {"metadata": metadata})
 
         if initialization_actions:
-            data_to_create['config'].update({"initializationActions": initialization_actions})
+            data_to_create['config'].update(
+                {"initializationActions": initialization_actions})
 
         result = self.__client.projects()\
             .regions()\
@@ -166,21 +172,24 @@ class Dataproc(object):
         datetime_now = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
         main_python_file = os.path.join(gs_root, main_pyspark_file)
-        job_id = "pyspark_{}_{}".format(os.path.basename(main_pyspark_file), datetime_now)
+        job_id = "pyspark_{}_{}".format(
+            os.path.basename(main_pyspark_file), datetime_now)
         job_id_formated = self.__format_job_id(job_id)
-        gs_python_files = [os.path.join(gs_root, python_file) for python_file in python_files]
+        gs_python_files = [os.path.join(gs_root, python_file)
+                           for python_file in python_files]
 
-        submit_dict = {"pysparkJob": {
-            "mainPythonFileUri": main_python_file,
-            "args": list_args,
-            "pythonFileUris": gs_python_files
+        submit_dict = {
+            "pysparkJob": {
+                "mainPythonFileUri": main_python_file,
+                "args": list_args,
+                "pythonFileUris": gs_python_files
             }
-                      }
+        }
         if archive_uris:
-            submit_dict["pysparkJob"].update({"archiveUris":archive_uris})
+            submit_dict["pysparkJob"].update({"archiveUris": archive_uris})
 
         if properties:
-            submit_dict["pysparkJob"].update({"properties":properties})
+            submit_dict["pysparkJob"].update({"properties": properties})
 
         return self.__submit_job(job_id_formated, cluster_name, submit_dict)
 
@@ -195,12 +204,13 @@ class Dataproc(object):
         main_class_formatted = self.__format_job_id(main_class)
 
         job_id = "spark_{}_{}".format(main_class_formatted, datetime_now)
-        submit_dict = {"sparkJob": {
-            "args": list_args,
-            "mainClass": main_class,
-            "jarFileUris": jar_files
+        submit_dict = {
+            "sparkJob": {
+                "args": list_args,
+                "mainClass": main_class,
+                "jarFileUris": jar_files
+            }
         }
-                      }
 
         if properties:
             submit_dict["sparkJob"]["properties"] = properties
@@ -216,13 +226,13 @@ class Dataproc(object):
         status = result['status']['state']
         self.__logger.info("JOB %s  -  STATUS:%s", job_id, status)
 
-        while status != 'ERROR' and status != 'DONE':
+        while status not in  ('ERROR', 'DONE'):
             result = request.execute()
             status = result['status']['state']
 
             if status == 'ERROR':
                 raise Exception(result['status']['details'])
-            elif status == 'DONE':
+            if status == 'DONE':
                 self.__logger.info("Job finished.")
                 return result
 
