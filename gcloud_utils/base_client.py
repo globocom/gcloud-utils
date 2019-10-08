@@ -1,9 +1,13 @@
+#pylint: disable=too-few-public-methods
+
 """base client to google services"""
 
 import os
 import logging
 
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+logging.basicConfig(
+    format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+
 
 class BaseClient(object):
     """ BaseClient BaseClient to google services"""
@@ -24,4 +28,4 @@ class BaseClient(object):
             raise Exception(
                 "Need a client or {} environment of your credentials"
                 .format(self.CREDENTIAL_ENV)
-                )
+            )

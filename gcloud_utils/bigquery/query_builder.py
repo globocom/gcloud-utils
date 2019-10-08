@@ -1,8 +1,10 @@
 """Module to build query"""
 from string import Template
 
+
 class QueryBuilder(object):
     """Query Builder class to load a query from a file or from a string"""
+
     def __init__(self, file_or_query):
         self._file_or_query = file_or_query
         self._query = self._load_query()

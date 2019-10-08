@@ -1,3 +1,5 @@
+#pylint: disable=no-self-use,invalid-name
+
 """Module to download and use files from Google Storage"""
 import os
 import logging
@@ -53,7 +55,8 @@ class Storage(BaseClient):
         files = self.list_files(path)
         result = []
         for file_blob in files:
-            result.append(self.get_file(file_blob.name, "{}/{}".format(local_path, file_blob.name)))
+            result.append(self.get_file(file_blob.name,
+                                        "{}/{}".format(local_path, file_blob.name)))
         return result
 
     def list_files(self, path, filter_suffix=None):
@@ -67,7 +70,7 @@ class Storage(BaseClient):
 
     def path_exists_storage(self, path):
         """Check if path exists on Storage"""
-        return  self._bucket.blob(path).exists()
+        return self._bucket.blob(path).exists()
 
     def upload_file(self, storage_path, local_path):
         """Upload one local file to Storage"""
