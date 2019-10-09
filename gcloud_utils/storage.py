@@ -7,6 +7,14 @@ from google.cloud import storage
 from gcloud_utils.base_client import BaseClient
 
 
+def _filter_suffix_files(blobs, suffix):
+    return [x for x in blobs if x.name.endswith(suffix)]
+
+def _prepare_path(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return path
+
 class Storage(BaseClient):
     """Google-Storage handler"""
 
@@ -16,24 +24,11 @@ class Storage(BaseClient):
         super(Storage, self).__init__(client, log_level)
         self._bucket = self._client.get_bucket(bucket)
 
-    def __filter_suffix_files(self, blobs, suffix):
-        return [x for x in blobs if x.name.endswith(suffix)]
-
-    def __get_file_name_from_path(self, full_path):
-        if not os.path.isfile(full_path):
-            raise ValueError("{} is not a file".format(full_path))
-        return full_path.split("/")[-1]
-
-    def __prepare_path(self, path):
-        if not os.path.exists(path):
-            os.makedirs(path)
-        return path
-
     def download_file(self, storage_path, local_path):
         """Download Storage file to local path, creating a path at local_path if nedded"""
         obj = self._bucket.get_blob(storage_path)
         local_file_full_path = os.path.join(local_path, obj.name)
-        self.__prepare_path(os.path.dirname(local_file_full_path))
+        _prepare_path(os.path.dirname(local_file_full_path))
         with open(local_file_full_path, 'wb') as local_file:
             obj.download_to_file(local_file)
         return local_file_full_path
@@ -70,8 +65,7 @@ class Storage(BaseClient):
         blobs_files = [x for x in blobs if not x.name.endswith("/")]
 
         if filter_suffix is not None:
-            return self.__filter_suffix_files(blobs_files, filter_suffix)
-
+            return _filter_suffix_files(blobs_files, filter_suffix)
         return blobs_files
 
     def path_exists_storage(self, path):

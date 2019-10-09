@@ -76,6 +76,7 @@ class Dataproc(object):
         if workers_names is None:
             workers_names = ["worker" + str(i) for i in range(1, workers+1)]
 
+        # Create a cluster
         data_to_create = {
             "projectId": self.__project,
             "clusterName": name,

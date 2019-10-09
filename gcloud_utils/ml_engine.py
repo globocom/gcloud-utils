@@ -8,8 +8,13 @@ import time
 from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
 
+from googleapiclient import discovery
+from oauth2client.client import GoogleCredentials
+
+
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+
 
 PACKAGE_PATH = "packages"
 JOB_DIR = "jobs"
@@ -31,8 +36,11 @@ class MlEngine(object):
         self.job_dir_suffix = "gs://{}/{}".format(self.bucket_name, job_dir)
         self.__logger = logging.getLogger(name=self.__class__.__name__)
 
-        credentials = None if not credentials_path else GoogleCredentials.from_stream(
-            credentials_path)
+        credentials = (
+            None
+            if not credentials_path
+            else GoogleCredentials.from_stream(credentials_path)
+        )
 
         self.client = discovery.build(
             'ml', 'v1', http=http, credentials=credentials)
@@ -108,8 +116,9 @@ class MlEngine(object):
             parent=self.parent, body=request_dict)
         return request
 
-    def create_model_version(self, model_name, version, job_id, python_version="",
-                             runtime_version="", framework=""):
+    def create_model_version(self, model_name, version, job_id,
+                             python_version="", runtime_version="",
+                             framework=""):
         """Increase Model version"""
         parent_model = self.__parent_model_name(model_name)
         body_request = {
@@ -174,7 +183,8 @@ class MlEngine(object):
         new_version = self.__increase_version(last_version)
 
         request = self.create_model_version(
-            model_name, new_version, job_id, python_version, runtime_version, framework)
+            model_name, new_version, job_id,
+            python_version, runtime_version, framework)
 
         return (request, new_version)
 
@@ -227,9 +237,10 @@ class MlEngine(object):
         self.__logger.info("Job finished with status %s", state)
         return state
 
-    def start_training_job(self, job_id_prefix, package_name, module, extra_packages=[],
-                           runtime_version="1.0", python_version="", scale_tier="",
-                           master_type="", worker_type="", parameter_server_type="",
+    def start_training_job(self, job_id_prefix, package_name, module,
+                           extra_packages=[], runtime_version="1.0",
+                           python_version="", scale_tier="", master_type="",
+                           worker_type="", parameter_server_type="",
                            worker_count="", parameter_server_count="", **args):
         """Start a training job"""
         main_package_uri = "{}/{}".format(self.package_full_path, package_name)
