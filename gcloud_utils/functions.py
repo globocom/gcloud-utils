@@ -3,6 +3,8 @@
 import os
 import json
 import logging
+import zipfile
+import requests
 from googleapiclient import discovery
 from googleapiclient.errors import HttpError
 
@@ -33,11 +35,30 @@ class Functions(object):
         res = self.__execute_request(generate_upload_url_request)
         return res['uploadUrl']
 
-    def __upload_funtion(path):
-        pass
+    def __execute_request(self, request):
+        return request.execute()
 
-    def __build_function(self, name, runtime, path,  trigger):
+    def __upload_function(path, filename, upload_url):
+        name, extension = os.path.splitext(filename)
+        self.__compress_function(path, name, extension)
+
+        zip_filename = '{}.zip'.format(name)
+        file_obj = open(os.path.join(path, zip_filename), 'rb')
+
+        files = {"archive": (zip_filename, file_obj)}
+
+        headers = {
+            'content-type': 'application/zip',
+            'x-goog-content-length-range': '0,104857600'
+        }
+
+        return requests.put(upload_url, files=files, headers=headers)
+
+    def __build_function(self, name, runtime, path, trigger):
         upload_url = self.__get_upload_url()
+
+        self.__upload_function(path, 'main.py', upload_url)
+
         body = {
             "entryPoint": name,
             "runtime": runtime,
@@ -47,8 +68,11 @@ class Functions(object):
 
         return self.functions.create(location=self.parent, body=body)
 
-    def __execute_request(self, request):
-        return request.execute()
+    def __compress_function(self, path, filename, extension):
+        zip = zipfile.ZipFile('{}.zip'.format(name), 'w')
+        zip.write(os.path.join(path, filename + extension),
+                  compress_type=zipfile.ZIP_DEFLATED)
+        zip.close()
 
     def create_function(self, name, runtime, trigger, path=os.getcwd()):
         request = self.__build_function(name, runtime, path, trigger)
@@ -56,7 +80,7 @@ class Functions(object):
         try:
             res = self.__execute_request(request)
         except HttpError as err:
-            header, body = err.args
+            body = err.args[1]
             err_message = json.loads(body.decode('utf-8'))['error']['message']
             logger.info('[ERROR] ' + err_message)
         return res
