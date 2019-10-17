@@ -7,10 +7,11 @@ from google.cloud import bigquery
 from datetime import date, datetime, timedelta
 from gcloud_utils.bigquery.bigquery import Bigquery
 
-DEFAULT_DATE_FORMAT='%Y%m%d'
+DEFAULT_DATE_FORMAT = '%Y%m%d'
 
 os.environ['TZ'] = 'America/Sao_Paulo'
 time.tzset()
+
 
 def main():
     parser = argparse.ArgumentParser(description='Process Google Cloud Storage to Bigquery table')
@@ -59,17 +60,18 @@ def main():
 
     start_date_string = dt.strftime(DEFAULT_DATE_FORMAT)
 
-    bq_table_name = args.bigquery_tablename % dict(date=start_date_string)
+    bq_table_name = args.bigquery_tablename.format(date=start_date_string)
 
     bq_client = Bigquery(bigquery.Client.from_service_account_json(args.gcs_key_json))
 
     job_config = bigquery.LoadJobConfig()
     job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
     job_config.autodetect = True
-    
+
     bq_client.cloud_storage_to_table(
         args.cloudstorage_bucket, args.cloudstorage_filename, args.bigquery_dataset, bq_table_name, job_config, args.import_format
     )
+
 
 if __name__ == "__main__":
     main()
