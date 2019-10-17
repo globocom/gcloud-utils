@@ -43,16 +43,13 @@ class Functions(object):
         self.__compress_function(path, name, extension)
 
         zip_filename = '{}.zip'.format(name)
-        file_obj = open(os.path.join(path, zip_filename), 'rb')
+        with open(os.path.join(path, zip_filename), 'rb') as f:
+            headers = {
+                'content-type': 'application/zip',
+                'x-goog-content-length-range': '0,104857600'
+            }
 
-        files = {"archive": (zip_filename, file_obj)}
-
-        headers = {
-            'content-type': 'application/zip',
-            'x-goog-content-length-range': '0,104857600'
-        }
-
-        return requests.put(upload_url, files=files, headers=headers)
+            return requests.put(upload_url, data=f, headers=headers)
 
     def __build_function(self, name, runtime, path, trigger):
         upload_url = self.__get_upload_url()
@@ -70,7 +67,7 @@ class Functions(object):
         return self.functions.create(location=self.parent, body=body)
 
     def __compress_function(self, path, filename, extension):
-        zip = zipfile.ZipFile('{}.zip'.format(filename), 'w')
+        zip = zipfile.ZipFile('{}/{}.zip'.format(path, filename), 'w')
         zip.write(os.path.join(path, filename + extension),
                   compress_type=zipfile.ZIP_DEFLATED, arcname=(filename + extension))
         zip.close()
