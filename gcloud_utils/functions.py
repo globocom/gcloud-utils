@@ -21,11 +21,8 @@ class Functions(object):
         self.functions = self.__get_functions_resource(self.client)
         self.parent = self.__build_parent()
 
-    def __check_runtime(self):
-        pass
-
     def __build_parent(self):
-        return "projects/{}/locations/{}".format(self.project, self.zone)
+        return 'projects/{}/locations/{}'.format(self.project, self.zone)
 
     def __get_functions_resource(self, client):
         return client.projects().locations().functions()
@@ -36,13 +33,16 @@ class Functions(object):
         res = self.__execute_request(generate_upload_url_request)
         return res['uploadUrl']
 
+    def __upload_funtion(path):
+        pass
+
     def __build_function(self, name, runtime, path,  trigger):
         upload_url = self.__get_upload_url()
         body = {
             "entryPoint": name,
             "runtime": runtime,
             "sourceUploadUrl": upload_url,
-            "name": self.parent + '/functions/' + name,
+            "name": '{}/functions/{}'.format(self.parent, name)
         }
 
         return self.functions.create(location=self.parent, body=body)
@@ -51,25 +51,31 @@ class Functions(object):
         return request.execute()
 
     def create_function(self, name, runtime, trigger, path=os.getcwd()):
-        function = self.__build_function(name, runtime, path, trigger)
+        request = self.__build_function(name, runtime, path, trigger)
 
         try:
-            res = self.__execute_request(function)
+            res = self.__execute_request(request)
         except HttpError as err:
             header, body = err.args
             err_message = json.loads(body.decode('utf-8'))['error']['message']
-            print('[ERROR] ' + err_message)
+            logger.info('[ERROR] ' + err_message)
         return res
 
     def list_functions(self):
-        pass
+        request = self.functions.list(location=self.parent)
+        return self.__execute_request(request)
+
+    def describe_function(self, name):
+        request = self.functions.get(
+            name='{}/functions/{}'.format(self.parent, name))
+        return self.__execute_request(request)
 
     def call_function(self, name, data):
         """Call a Cloud Function"""
 
-        function = "projects/{}/locations/{}/functions/{}".format(
+        function = 'projects/{}/locations/{}/functions/{}'.format(
             self.project, self.zone, name)
 
-        request = self.functions.call(name=function, body={"data": data})
+        request = self.functions.call(name=function, body={'data': data})
 
         return self.__execute_request(request)
