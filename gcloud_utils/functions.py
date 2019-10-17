@@ -63,15 +63,16 @@ class Functions(object):
             "entryPoint": name,
             "runtime": runtime,
             "sourceUploadUrl": upload_url,
+            "httpsTrigger": {},
             "name": '{}/functions/{}'.format(self.parent, name)
         }
 
         return self.functions.create(location=self.parent, body=body)
 
     def __compress_function(self, path, filename, extension):
-        zip = zipfile.ZipFile('{}.zip'.format(name), 'w')
+        zip = zipfile.ZipFile('{}.zip'.format(filename), 'w')
         zip.write(os.path.join(path, filename + extension),
-                  compress_type=zipfile.ZIP_DEFLATED)
+                  compress_type=zipfile.ZIP_DEFLATED, arcname=(filename + extension))
         zip.close()
 
     def create_function(self, name, runtime, trigger, path=os.getcwd()):
@@ -80,11 +81,11 @@ class Functions(object):
 
         try:
             res = self.__execute_request(request)
+            return res
         except HttpError as err:
             body = err.args[1]
             err_message = json.loads(body.decode('utf-8'))['error']['message']
-            logger.info('[ERROR] ' + err_message)
-        return res
+            self.logger.info('[ERROR] ' + err_message)
 
     def list_functions(self):
         """List the cloud functions"""
