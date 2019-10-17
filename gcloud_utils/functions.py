@@ -51,14 +51,14 @@ class Functions(object):
 
             return requests.put(upload_url, data=f, headers=headers)
 
-    def __build_function(self, name, runtime, path, trigger):
+    def __build_function(self, name, path):
         upload_url = self.__get_upload_url()
 
         self.__upload_function(path, 'main.py', upload_url)
 
         body = {
             "entryPoint": name,
-            "runtime": runtime,
+            "runtime": "python37",
             "sourceUploadUrl": upload_url,
             "httpsTrigger": {},
             "name": '{}/functions/{}'.format(self.parent, name)
@@ -72,9 +72,9 @@ class Functions(object):
                   compress_type=zipfile.ZIP_DEFLATED, arcname=(filename + extension))
         zip.close()
 
-    def create_function(self, name, runtime, trigger, path=os.getcwd()):
+    def create_function(self, name, path=os.getcwd()):
         """Create and Deploy a Cloud Function"""
-        request = self.__build_function(name, runtime, path, trigger)
+        request = self.__build_function(name, path)
 
         try:
             res = self.__execute_request(request)
