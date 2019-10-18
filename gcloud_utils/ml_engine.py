@@ -5,9 +5,7 @@ import datetime
 import logging
 import re
 import time
-from googleapiclient import discovery
-from oauth2client.client import GoogleCredentials
-
+import pickle
 from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
 
@@ -115,6 +113,37 @@ class MlEngine(object):
         request = self.client.projects().models().create(
             parent=self.parent, body=request_dict)
         return request
+
+    def export_model(self, clf, model_path="model.pkl"):
+        """
+        Export a classifier/pipeline to model path.
+        Frameworks supported : XGBoost booster, Scikit-learn estimator and pipelines.
+        """
+        try:
+            with open(model_path, 'wb') as model_file:
+                pickle.dump(clf, model_file)
+        except Exception as error:
+            logging.error("Failed to export model to {}.".format(model_path))
+            raise error
+
+    def predict_json(self, project, model, instances, version=None):
+        """Send json data to a deployed model for prediction.
+        """
+        service = discovery.build('ml', 'v1')
+        name = 'projects/{}/models/{}'.format(project, model)
+
+        if version is not None:
+            name += '/versions/{}'.format(version)
+
+        response = service.projects().predict(
+            name=name,
+            body={'instances': instances}
+        ).execute()
+
+        if 'error' in response:
+            raise RuntimeError(response['error'])
+
+        return response['predictions']
 
     def create_model_version(self, model_name, version, job_id,
                              python_version="", runtime_version="",
