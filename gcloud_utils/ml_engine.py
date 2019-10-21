@@ -8,10 +8,6 @@ import time
 from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
 
-from googleapiclient import discovery
-from oauth2client.client import GoogleCredentials
-
-
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
 
