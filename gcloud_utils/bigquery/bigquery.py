@@ -1,4 +1,4 @@
-#pylint: disable=too-many-arguments,bare-except
+#pylint: disable=too-many-arguments,bare-except, broad-except
 
 """Module to handle Google BigQuery Service"""
 
