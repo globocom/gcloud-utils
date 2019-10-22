@@ -18,3 +18,5 @@ For development and contributing, please follow [Contributing Guide](https://git
 
 
 See [Full Documentation](https://gcloud-utils.readthedocs.io/en/latest/) for more details.
+
+*This article can also be read in [Brazilian Portuguese](README-pt-BR.md).*
