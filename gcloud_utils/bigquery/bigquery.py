@@ -1,13 +1,12 @@
-#pylint: disable=too-many-arguments,bare-except
-
 """Module to handle Google BigQuery Service"""
 
 import logging
 
-from google.cloud import bigquery
-from google.api_core.exceptions import NotFound
-from gcloud_utils.bigquery.query_builder import QueryBuilder
+from google.api_core.exceptions import NotFound, Conflict
+
 from gcloud_utils.base_client import BaseClient
+from gcloud_utils.bigquery.query_builder import QueryBuilder
+from google.cloud import bigquery
 
 
 class Bigquery(BaseClient):
@@ -44,8 +43,8 @@ class Bigquery(BaseClient):
         return self._client.query(**kwargs).result()
 
     def query_to_table(self, query_or_object, dataset_id,
-                       table_id, write_disposition="WRITE_TRUNCATE", job_config=None,
-                       **kwargs):
+                       table_id, write_disposition="WRITE_TRUNCATE",
+                       job_config=None, **kwargs):
         """Execute a query in a especific table"""
         job_config = job_config if job_config else bigquery.QueryJobConfig()
         table = self._client.dataset(dataset_id).table(table_id)
@@ -104,8 +103,9 @@ class Bigquery(BaseClient):
         """Create a table based on dataset"""
         try:
             self.create_dataset(dataset_id)
-        except Exception:
-            pass
+        except Conflict as e:
+            if e.code != 409:
+                raise e
 
         dataset_ref = self._client.dataset(dataset_id)
         table_ref = dataset_ref.table(table_id)

@@ -41,10 +41,6 @@ coverage:
 	@coverage xml
 
 lint:
-ifeq ($(PYTHON_VERSION),3)
-	@pylint ./gcloud_utils/ --rcfile=python3.pylintrc
-else
-	@pylint ./gcloud_utils/
-endif
+	@pylint ./gcloud_utils/ --rcfile=python.pylintrc
 
 ci: coverage lint
