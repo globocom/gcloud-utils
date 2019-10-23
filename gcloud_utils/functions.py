@@ -67,6 +67,7 @@ class Functions(object):
         return self.functions.create(location=self.parent, body=body)
 
     def __compress_function(self, path, filename, extension):
+        self.logger.info("Compressing File %s", filename)
         zip_file = zipfile.ZipFile('{}/{}.zip'.format(path, filename), 'w')
         zip_file.write(os.path.join(path, filename + extension),
                        compress_type=zipfile.ZIP_DEFLATED,
