@@ -1,5 +1,3 @@
-#pylint: disable=too-few-public-methods
-
 """base client to google services"""
 
 import os

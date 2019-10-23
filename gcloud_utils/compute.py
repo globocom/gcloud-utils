@@ -1,5 +1,3 @@
-#pylint: disable=no-member
-
 """Module to handle Google Compute Service"""
 import time
 import logging

@@ -43,13 +43,13 @@ class Functions(object):
         self.__compress_function(path, name, extension)
 
         zip_filename = '{}.zip'.format(name)
-        with open(os.path.join(path, zip_filename), 'rb') as f:
+        with open(os.path.join(path, zip_filename), 'rb') as zip_file:
             headers = {
                 'content-type': 'application/zip',
                 'x-goog-content-length-range': '0,104857600'
             }
 
-            return requests.put(upload_url, data=f, headers=headers)
+            return requests.put(upload_url, data=zip_file, headers=headers)
 
     def __build_function(self, name, path):
         upload_url = self.__get_upload_url()
@@ -67,10 +67,12 @@ class Functions(object):
         return self.functions.create(location=self.parent, body=body)
 
     def __compress_function(self, path, filename, extension):
-        zip = zipfile.ZipFile('{}/{}.zip'.format(path, filename), 'w')
-        zip.write(os.path.join(path, filename + extension),
-                  compress_type=zipfile.ZIP_DEFLATED, arcname=(filename + extension))
-        zip.close()
+        self.logger.info("Compressing File %s", filename)
+        zip_file = zipfile.ZipFile('{}/{}.zip'.format(path, filename), 'w')
+        zip_file.write(os.path.join(path, filename + extension),
+                       compress_type=zipfile.ZIP_DEFLATED,
+                       arcname=(filename + extension))
+        zip_file.close()
 
     def create_function(self, name, path=os.getcwd()):
         """Create and Deploy a Cloud Function"""
@@ -82,7 +84,7 @@ class Functions(object):
         except HttpError as err:
             body = err.args[1]
             err_message = json.loads(body.decode('utf-8'))['error']['message']
-            self.logger.info('[ERROR] ' + err_message)
+            self.logger.error(err_message)
 
     def list_functions(self):
         """List the cloud functions"""
