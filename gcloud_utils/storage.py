@@ -1,5 +1,3 @@
-#pylint: disable=no-self-use,invalid-name
-
 """Module to download and use files from Google Storage"""
 import os
 import logging

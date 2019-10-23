@@ -1,5 +1,3 @@
-#pylint: disable=no-member,too-many-instance-attributes,no-self-use,too-many-arguments,too-many-locals,dangerous-default-value
-
 """Submit Job to ML Engine"""
 import datetime
 import logging
@@ -9,10 +7,8 @@ import pickle
 from googleapiclient import discovery
 from oauth2client.client import GoogleCredentials
 
-
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
-
 
 PACKAGE_PATH = "packages"
 JOB_DIR = "jobs"
@@ -95,7 +91,7 @@ class MlEngine(object):
         return "v{}".format(new_version.replace(".", "_"))
 
     def __parent_model_name(self, model_name):
-        return self.parent+"/models/"+model_name
+        return self.parent + "/models/" + model_name
 
     def __parse_start_training_args(self, args):
         formated_args = []
@@ -192,6 +188,7 @@ class MlEngine(object):
     def delete_older_model_versions(self, model_name, n_versions_to_keep):
         """Keep the most recents model versions and delete older ones.
         The number of models to keep is specified by the parameter n_versions_to_keep"""
+
         def _get_use_time(version):
             use_time = version.get('lastUseTime') or version.get('createTime')
             return time.strptime(use_time, "%Y-%m-%dT%H:%M:%SZ")
@@ -268,11 +265,15 @@ class MlEngine(object):
         return state
 
     def start_training_job(self, job_id_prefix, package_name, module,
-                           extra_packages=[], runtime_version="1.0",
+                           extra_packages=None, runtime_version="1.0",
                            python_version="", scale_tier="", master_type="",
                            worker_type="", parameter_server_type="",
                            worker_count="", parameter_server_count="", **args):
         """Start a training job"""
+
+        if extra_packages is None:
+            extra_packages = []
+
         main_package_uri = "{}/{}".format(self.package_full_path, package_name)
         packages_uris = ["{}/{}".format(self.package_full_path, ep)
                          for ep in extra_packages]

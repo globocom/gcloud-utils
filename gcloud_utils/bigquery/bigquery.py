@@ -3,10 +3,10 @@
 import logging
 
 from google.api_core.exceptions import NotFound, Conflict
+from google.cloud import bigquery
 
 from gcloud_utils.base_client import BaseClient
 from gcloud_utils.bigquery.query_builder import QueryBuilder
-from google.cloud import bigquery
 
 
 class Bigquery(BaseClient):
@@ -103,9 +103,10 @@ class Bigquery(BaseClient):
         """Create a table based on dataset"""
         try:
             self.create_dataset(dataset_id)
-        except Conflict as e:
-            if e.code != 409:
-                raise e
+        except Conflict as ex:
+            # Ignore database already exists conflict.
+            if ex.code != 409:
+                raise ex
 
         dataset_ref = self._client.dataset(dataset_id)
         table_ref = dataset_ref.table(table_id)
