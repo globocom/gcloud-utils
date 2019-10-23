@@ -117,18 +117,19 @@ class MlEngine(object):
     def export_model(self, clf, model_path="model.pkl"):
         """
         Export a classifier/pipeline to model path.
-        Frameworks supported : XGBoost booster, Scikit-learn estimator and pipelines.
+        Frameworks supported : XGBoost booster, Scikit-learn estimator and
+        pipelines.
         """
+
         try:
             with open(model_path, 'wb') as model_file:
                 pickle.dump(clf, model_file)
         except Exception as error:
-            logging.error("Failed to export model to {}.".format(model_path))
+            logging.error("Failed to export model to %s.", model_path)
             raise error
 
     def predict_json(self, project, model, instances, version=None):
-        """Send json data to a deployed model for prediction.
-        """
+        """Send json data to a deployed model for prediction."""
         service = discovery.build('ml', 'v1')
         name = 'projects/{}/models/{}'.format(project, model)
 
