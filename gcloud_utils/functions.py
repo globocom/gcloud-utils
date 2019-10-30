@@ -1,6 +1,7 @@
 """Module to handle Google Cloud Functions Service"""
 
 import os
+import re
 import json
 import logging
 import zipfile
@@ -51,14 +52,23 @@ class Functions(object):
 
             return requests.put(upload_url, data=zip_file, headers=headers)
 
-    def __build_function(self, name, path):
+    def __get_filename(self, runtime):
+        filename = ""
+        if re.match(r'^nodejs', runtime):
+            filename = "index.js"
+        elif runtime == "python37":
+            filename = "main.py"
+        return filename
+
+    def __build_function(self, name, runtime, path):
         upload_url = self.__get_upload_url()
 
-        self.__upload_function(path, 'main.py', upload_url)
+        filename = self.__get_filename(runtime)
+        self.__upload_function(path, filename, upload_url)
 
         body = {
             "entryPoint": name,
-            "runtime": "python37",
+            "runtime": runtime,
             "sourceUploadUrl": upload_url,
             "httpsTrigger": {},
             "name": '{}/functions/{}'.format(self.parent, name)
@@ -74,9 +84,9 @@ class Functions(object):
                        arcname=(filename + extension))
         zip_file.close()
 
-    def create_function(self, name, path=os.getcwd()):
+    def create_function(self, name, runtime, path=os.getcwd()):
         """Create and Deploy a Cloud Function"""
-        request = self.__build_function(name, path)
+        request = self.__build_function(name, runtime, path)
 
         try:
             res = self.__execute_request(request)
