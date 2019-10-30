@@ -53,10 +53,12 @@ class Functions(object):
             return requests.put(upload_url, data=zip_file, headers=headers)
 
     def __get_filename(self, runtime):
+        filename = ""
         if re.match(r'^nodejs', runtime):
-            return "index.js"
-        else if (runtime == "python37"):
-            return "main.py"
+            filename = "index.js"
+        elif runtime == "python37":
+            filename = "main.py"
+        return filename
 
     def __build_function(self, name, runtime, path):
         upload_url = self.__get_upload_url()
