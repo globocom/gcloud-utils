@@ -97,21 +97,16 @@ class Bigquery(BaseClient):
     def create_dataset(self, dataset_id):
         """Create a dataset"""
         dataset = bigquery.Dataset(self._client.dataset(dataset_id))
-        return self._client.create_dataset(dataset)
+        return self._client.create_dataset(dataset, True)
 
     def create_table(self, dataset_id, table_id):
         """Create a table based on dataset"""
-        try:
-            self.create_dataset(dataset_id)
-        except Conflict as ex:
-            # Ignore database already exists conflict.
-            if ex.code != 409:
-                raise ex
+        self.create_dataset(dataset_id)
 
         dataset_ref = self._client.dataset(dataset_id)
         table_ref = dataset_ref.table(table_id)
         table = bigquery.Table(table_ref)
-        return self._client.create_table(table)
+        return self._client.create_table(table, True)
 
     def cloud_storage_to_table(self, bucket_name, filename,
                                dataset_id, table_id, job_config=None,
