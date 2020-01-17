@@ -2,7 +2,7 @@
 
 import logging
 
-from google.api_core.exceptions import NotFound, Conflict
+from google.api_core.exceptions import NotFound
 from google.cloud import bigquery
 
 from gcloud_utils.base_client import BaseClient
