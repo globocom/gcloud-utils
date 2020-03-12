@@ -249,24 +249,24 @@ class MlEngine(object):
         return job
 
     def wait_job_to_finish(self, job_id, sleep_time=60, tries=3):
-        """Waits job to finish"""         
-        try:                 
+        """Waits job to finish"""
+        try:
             self.__logger.info("Staring Pooling request")
             job = self.get_job(job_id)
             state = job['state']
             self.__logger.info("%s state: %s", job_id, state)
-            
+
             while state not in ['SUCCEEDED', 'FAILED', 'CANCELLED']:
                 self.__logger.info("Poolling")
-                time.sleep(sleep_time)                    
+                time.sleep(sleep_time)
                 job = self.get_job(job_id)
                 state = job['state']
                 self.__logger.info("%s state: %s", job_id, state)
-        except Exception as e: 
-            if(tries >= 0):
-                wait_job_to_finish(self, job_id, sleep_time, tries - 1)
+        except Exception as e:
+            if tries >= 0:
+                self.wait_job_to_finish(job_id, sleep_time, tries - 1)
             else:
-                self.__logger.info("Error caused by: %s", e)                
+                self.__logger.warning("Error caused by: %s", e)
         finally:
             self.__logger.info("Job finished with status %s", state)
 
