@@ -5,6 +5,7 @@ import re
 import time
 import pickle
 from googleapiclient import discovery
+from googleapiclient.errors import HttpError
 from oauth2client.client import GoogleCredentials
 
 logging.basicConfig(level=logging.INFO,
@@ -248,20 +249,28 @@ class MlEngine(object):
         job = self.client.projects().jobs().get(name=name).execute()
         return job
 
-    def wait_job_to_finish(self, job_id, sleep_time=60):
+    def wait_job_to_finish(self, job_id, sleep_time=60, tries=3):
         """Waits job to finish"""
-
-        job = self.get_job(job_id)
-        state = job['state']
-        self.__logger.info("%s state: %s", job_id, state)
-
-        while state not in ['SUCCEEDED', 'FAILED', 'CANCELLED']:
-            time.sleep(sleep_time)
+        try:
+            self.__logger.info("Staring Pooling request")
             job = self.get_job(job_id)
             state = job['state']
             self.__logger.info("%s state: %s", job_id, state)
 
-        self.__logger.info("Job finished with status %s", state)
+            while state not in ['SUCCEEDED', 'FAILED', 'CANCELLED']:
+                self.__logger.info("Poolling")
+                time.sleep(sleep_time)
+                job = self.get_job(job_id)
+                state = job['state']
+                self.__logger.info("%s state: %s", job_id, state)
+        except HttpError as e:
+            if tries >= 0:
+                self.wait_job_to_finish(job_id, sleep_time, tries - 1)
+            else:
+                self.__logger.warning("Error caused by: %s", e)
+        finally:
+            self.__logger.info("Job finished with status %s", state)
+
         return state
 
     def start_training_job(self, job_id_prefix, package_name, module,
