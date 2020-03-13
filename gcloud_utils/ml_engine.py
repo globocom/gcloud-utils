@@ -5,6 +5,7 @@ import re
 import time
 import pickle
 from googleapiclient import discovery
+from googleapiclient.errors import HttpError
 from oauth2client.client import GoogleCredentials
 
 logging.basicConfig(level=logging.INFO,
@@ -262,7 +263,7 @@ class MlEngine(object):
                 job = self.get_job(job_id)
                 state = job['state']
                 self.__logger.info("%s state: %s", job_id, state)
-        except Exception as e:
+        except HttpError as e:
             if tries >= 0:
                 self.wait_job_to_finish(job_id, sleep_time, tries - 1)
             else:
