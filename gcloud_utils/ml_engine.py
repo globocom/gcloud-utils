@@ -88,7 +88,7 @@ class MlEngine(object):
             )
 
         float_value = float(version[1:].replace("_", "."))
-        new_version = str(float_value + 0.1)
+        new_version = "{:.1f}".format(float_value + 0.1)
         return "v{}".format(new_version.replace(".", "_"))
 
     def __parent_model_name(self, model_name):
