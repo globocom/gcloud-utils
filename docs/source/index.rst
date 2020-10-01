@@ -190,3 +190,8 @@ Storage
 =================
 .. automodule:: gcloud_utils.storage
    :members:
+
+Cloud Function
+=================
+.. automodule:: gcloud_utils.functions
+   :members:
