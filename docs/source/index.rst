@@ -176,6 +176,11 @@ Compute
 .. automodule:: gcloud_utils.compute
    :members:
 
+Cloud Function
+=================
+.. automodule:: gcloud_utils.functions
+   :members:
+
 BigQuery
 =================
 .. automodule:: gcloud_utils.bigquery.bigquery
