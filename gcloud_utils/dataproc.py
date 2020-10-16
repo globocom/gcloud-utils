@@ -7,7 +7,7 @@ import logging
 import datetime
 import os
 import re
-from googleapiclient import discovery
+from google.cloud import dataproc
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
@@ -17,9 +17,9 @@ class Dataproc(object):
     """Module to handle with Dataproc cluster"""
 
     def __init__(self, project, region, http=None):
-        self.__project = project
+        self.__project = project_id
         self.__region = region
-        self.__logger = logging.getLogger(name=self.__class__.__name__)
+        self.__logger = logging.getLogger(cluster_name=self.__class__.__name__)
         self.__client = discovery.build('dataproc', 'v1', http=http)
 
         self.__pattern = re.compile(r'[\W_]+')
