@@ -12,11 +12,11 @@ class TestFunctions(unittest.TestCase):
     def setUp(self):
         self.functions = functions.Functions(PROJECT, ZONE)
 
-    def test_list_functions(self):
-        self.functions.list_functions = MagicMock()
+    def test_describe_function(self):
+        self.functions = MagicMock()
         self.functions__execute_request = MagicMock()
 
-        self.functions.list_functions()
+        self.functions.describe_function()
 
-        self.functions.list_functions.assert_called_once()
+        self.functions.assert_called_once()
         self.functions__execute_request.asser_called_once()
