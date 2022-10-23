@@ -35,7 +35,7 @@ make release
    variables, exposed ports, useful file locations and container parameters.
 3. Increase the version numbers in any examples files and the README.md to the new version that this
    Pull Request would represent. The versioning scheme we use is [SemVer](http://semver.org/).
-4. You may merge the Pull Request in once you have the sign-off of two other developers, or if you 
+4. You may merge the Pull Request once you have the sign-off of two other developers, or if you 
    do not have permission to do that, you may request the second reviewer to merge it for you.
 
 ## Submitting an Issue
@@ -50,7 +50,7 @@ chances of your issue being dealt with quickly:
 * **Motivation for or Use Case** - explain why this is a bug for you
 * **Gcloud Utils Version(s)** - is it a regression?
 * **Cloud in use** - is this a problem with Google Cloud only?
-* **Reproduce the error** - provide a live example, screenshot, and/or a unambiguous set of steps. The more the better.
+* **Reproduce the error** - provide a live example, screenshot, and/or an unambiguous set of steps. The more the better.
 * **Related issues** - has a similar issue been reported before?  Reference the related issues in the description.
 * **Suggest a Fix** - if you can't fix the bug yourself, perhaps you can point to what might be
   causing the problem (line of code or commit).  If you're requesting a feature, describe how the feature might work to resolve the user story.
